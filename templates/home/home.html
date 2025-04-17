@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- Barra de Búsqueda -->
+    <div class="row my-4">
+        <div class="col-12">
+            <form method="GET" action="{% url 'home' %}" class="mb-4">
+                <div class="input-group">
+                    <input type="text" class="form-control" 
+                           name="rut" 
+                           placeholder="Buscar por RUT (Ej: 12345678-9)" 
+                           value="{{ request.GET.rut }}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search me-2"></i>Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mensaje si no se encuentra el usuario -->
+    {% if busqueda_realizada and not usuario_encontrado %}
+    <div class="alert alert-warning">
+        No se encontró ningún usuario con el RUT proporcionado.
+    </div>
+    {% endif %}
+
+    <!-- Tarjeta de Resultado -->
+    {% if usuario_encontrado %}
+    <div class="card shadow mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Miembro Encontrado</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nombre:</strong> {{ usuario_encontrado.get_full_name }}</p>
+                    <p><strong>RUT:</strong> {{ usuario_encontrado.rut }}</p>
+                    <p><strong>Teléfono:</strong> {{ usuario_encontrado.telefono }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Dirección:</strong> {{ usuario_encontrado.direccion }}</p>
+                    <p><strong>Membresía:</strong> {{ usuario_encontrado.modo_pago }} meses</p>
+                    <p><strong>Estado:</strong> {% if usuario_encontrado.es_activo %}Activo{% else %}Inactivo{% endif %}</p>
+                </div>
+            </div>
+            <div class="mt-3">
+                <a href="{% url 'editar_usuario' usuario_encontrado.id %}" 
+                   class="btn btn-warning me-2">
+                    <i class="bi bi-pencil-square me-2"></i>Modificar Datos
+                </a>
+                <a href="{% url 'registro_huella' usuario_encontrado.id %}" 
+                   class="btn btn-success">
+                    <i class="bi bi-fingerprint me-2"></i>Agregar Huella
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Tarjetas de Estadísticas -->
+    <div class="row my-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Miembros Totales</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_miembros }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-people-fill fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Miembros Activos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.miembros_activos }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-person-check-fill fa-2x text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Ingresos Hoy</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.ingresos_hoy }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-door-open-fill fa-2x text-info"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Vencimientos Próximos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.vencimientos_proximos }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-calendar-x-fill fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="row my-4">
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h5 class="mb-0">Acciones Rápidas</h5>
+                </div>
+                <div class="card-body text-center">
+                    <a href="{% url 'registrar_usuario' %}" class="btn btn-primary btn-block mb-3">
+                        <i class="bi bi-person-plus-fill me-2"></i>Nuevo Miembro
+                    </a>
+                    <a href="{% url 'lecto_ingreso' %}" class="btn btn-success btn-block mb-3">
+                        <i class="bi bi-fingerprint me-2"></i>Registro Asistencia
+                    </a>
+                    <a href="{% url 'admin:index' %}" class="btn btn-info btn-block">
+                        <i class="bi bi-gear-fill me-2"></i>Panel Administración
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Últimos Movimientos -->
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-gradient-success text-white">
+                    <h5 class="mb-0">Últimos Movimientos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Miembro</th>
+                                    <th>RUT</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha/Hora</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for asis in ultimas_asistencias %}
+                                <tr>
+                                    <td>{{ asis.usuario.get_full_name }}</td>
+                                    <td>{{ asis.usuario.rut }}</td>
+                                    <td>
+                                        {% if asis.tipo == 'E' %}
+                                            <span class="badge bg-success">Entrada</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Salida</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ asis.fecha_hora|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(45deg, #4e73df, #224abe);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(45deg, #1cc88a, #13855c);
+}
+
+.card {
+    border-radius: 0.5rem;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.btn-block {
+    padding: 1rem;
+    font-size: 1.1rem;
+}
+</style>
+{% endblock %}

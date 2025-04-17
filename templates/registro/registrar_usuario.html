@@ -1,0 +1,91 @@
+<!-- registro_usuario.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="gym-form-container">
+<link rel="stylesheet" href="{% static 'css/formularios.css' %}">
+    <div class="form-header animate-slide-down">
+        <h1 class="form-title">Nuevo Miembro</h1>
+        <div class="form-icon">
+            <i class="fas fa-dumbbell"></i>
+        </div>
+    </div>
+
+    {% if form.errors %}
+    <div class="form-error animate-shake">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="form-card animate-fade-in">
+        <form method="post" class="member-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">RUT <span class="required">*</span></label>
+                    <div class="input-group">
+                        {{ form.rut }}
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nombre</label>
+                    <div class="input-group">
+                        {{ form.first_name }}
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Apellido</label>
+                    <div class="input-group">
+                        {{ form.last_name }}
+                        <i class="fas fa-user-tag"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Teléfono</label>
+                    <div class="input-group">
+                        {{ form.telefono }}
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Dirección</label>
+                    <div class="input-group" >
+                        {{ form.direccion }}
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Membresía <span class="required">*</span></label>
+                    <div class="input-group">
+                        {{ form.modo_pago }}
+                        <i class="fas fa-calendar-star"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="form-btn primary-btn animate-hover">
+                    <i class="fas fa-user-plus"></i> Registrar Miembro
+                </button>
+                <a href="{% url 'home' %}" class="form-btn secondary-btn animate-hover">
+                    <i class="fas fa-home"></i> Volver al Inicio
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

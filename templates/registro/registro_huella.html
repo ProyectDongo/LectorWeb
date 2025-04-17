@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Registro Biométrico{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg glassmorphism-card">
+        <div class="card-header bg-gradient-primary text-white">
+            <h3 class="mb-0">
+                <i class="bi bi-fingerprint me-2"></i>Registro de Huella - {{ usuario.get_full_name }}
+            </h3>
+        </div>
+        
+        <div class="card-body">
+            <div class="row g-4">
+                <!-- Paso 1 -->
+                <div class="col-md-6" id="step1-container">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            Paso 1: Capturar Huella 1
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="fingerprint-guide mb-3">
+                                <i class="bi bi-fingerprint fs-1 text-primary"></i>
+                                <div class="scan-animation"></div>
+                            </div>
+                            <button id="btnCapture1" class="btn btn-primary w-100 btn-capture">
+                                <i class="bi bi-record-circle me-2"></i>Capturar Ahora
+                            </button>
+                            <div id="status1" class="mt-3 small text-muted"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paso 2 -->
+                <div class="col-md-6" id="step2-container">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            Paso 2: Capturar Huella 2
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="fingerprint-guide mb-3">
+                                <i class="bi bi-fingerprint fs-1 text-primary"></i>
+                                <div class="scan-animation"></div>
+                            </div>
+                            <button id="btnCapture2" class="btn btn-primary w-100 btn-capture" disabled>
+                                <i class="bi bi-record-circle me-2"></i>Capturar Ahora
+                            </button>
+                            <div id="status2" class="mt-3 small text-muted"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de Resultado -->
+            <div id="final-result" class="mt-4 text-center" style="display: none;">
+                <button id="btnRegister" class="btn btn-success btn-lg" disabled>
+                    <i class="bi bi-save me-2"></i>Registrar Huellas
+                </button>
+                <div id="final-status" class="mt-3"></div>
+            </div>
+
+            <!-- CSRF Token -->
+            {% csrf_token %}
+            
+            <!-- Botón de regreso -->
+            <div class="text-center mt-5">
+                <a href="{% url 'home' %}" 
+                   class="btn btn-outline-primary btn-back">
+                    <i class="bi bi-arrow-left me-2"></i>Volver al panel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.glassmorphism-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #3b82f6, #6366f1) !important;
+}
+
+@keyframes scanning {
+    0% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.8); }
+}
+
+.scan-animation {
+    animation: scanning 2s infinite;
+}
+
+.btn-capture:disabled {
+    opacity: 0.6;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const state = { template1: null, template2: null };
+    const elements = {
+        btnCapture1: document.getElementById('btnCapture1'),
+        btnCapture2: document.getElementById('btnCapture2'),
+        btnRegister: document.getElementById('btnRegister'),
+        status1: document.getElementById('status1'),
+        status2: document.getElementById('status2'),
+        finalStatus: document.getElementById('final-status'),
+        finalResult: document.getElementById('final-result')
+    };
+
+    const showAlert = (message, type = 'success', element) => {
+        element.innerHTML = `
+            <div class="alert alert-${type} alert-dismissible fade show">
+                <i class="bi ${type === 'success' ? 'bi-check-circle' : 'bi-exclamation-triangle'} me-2"></i>
+                ${message}
+            </div>
+        `;
+    };
+
+    const captureFingerprint = async (step) => {
+        try {
+            console.log(`Iniciando captura de huella ${step}`);
+            const response = await fetch('http://localhost:9000/capture', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Error en la captura');
+            }
+            const data = await response.json();
+            console.log(`Huella ${step} capturada:`, data);
+            return data.template;
+        } catch (error) {
+            showAlert(`Error: ${error.message}`, 'danger', step === 1 ? elements.status1 : elements.status2);
+            throw error;
+        }
+    };
+
+    // Captura huella 1
+    elements.btnCapture1.addEventListener('click', async () => {
+        try {
+            state.template1 = await captureFingerprint(1);
+            showAlert('Huella 1 capturada', 'success', elements.status1);
+            elements.btnCapture1.disabled = true;
+            elements.btnCapture2.disabled = false;
+        } catch (error) {
+            console.error('Error captura 1:', error);
+        }
+    });
+
+    // Captura huella 2
+    elements.btnCapture2.addEventListener('click', async () => {
+        try {
+            state.template2 = await captureFingerprint(2);
+            showAlert('Huella 2 capturada', 'success', elements.status2);
+            elements.btnCapture2.disabled = true;
+            elements.btnRegister.disabled = false;
+            elements.finalResult.style.display = 'block'; // Mostrar botón de registro
+        } catch (error) {
+            console.error('Error captura 2:', error);
+        }
+    });
+
+    // Registro final
+    elements.btnRegister.addEventListener('click', async () => {
+        try {
+            console.log("Iniciando comparación de huellas");
+            const matchResponse = await fetch('http://localhost:9000/match', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    template1: state.template1,
+                    template2: state.template2
+                })
+            });
+            
+            if (!matchResponse.ok) {
+                const errorData = await matchResponse.json();
+                throw new Error(errorData.error || 'Error en comparación');
+            }
+            const matchData = await matchResponse.json();
+            console.log("Resultado de comparación:", matchData);
+            
+            if (matchData.score < 80) {
+                showAlert(`Coincidencia insuficiente (${matchData.score}/100)`, 'warning', elements.finalStatus);
+                return;
+            }
+
+            console.log("Iniciando registro de huella en el servidor");
+            const saveResponse = await fetch("{% url 'api_registro_huella' usuario.id %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    template1: state.template1,
+                    template2: state.template2,
+                    match_score: matchData.score
+                })
+            });
+
+            if (!saveResponse.ok) {
+                const errorData = await saveResponse.json();
+                throw new Error(errorData.error || 'Error al registrar la huella');
+            }
+
+            const saveData = await saveResponse.json();
+            console.log("Respuesta del servidor:", saveData);
+            showAlert('Huella registrada exitosamente', 'success', elements.finalStatus);
+            
+            // Redirigir al home después de 2 segundos
+            setTimeout(() => {
+                window.location.href = "{% url 'home' %}";
+            }, 2000);
+
+        } catch (error) {
+            console.error("Error en registro:", error);
+            showAlert(`Error: ${error.message}`, 'danger', elements.finalStatus);
+        }
+    });
+});
+</script>
+{% endblock %}

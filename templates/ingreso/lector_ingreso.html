@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registro de Asistencia - PowerFit Gym{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/ingreso.css' %}">
+<div class="attendance-container">
+    <div class="attendance-header">
+        
+        <h1 class="animated-title">Registro de Asistencia</h1>
+        <p class="instruction-text">Coloque su dedo en el sensor para registrar su asistencia</p>
+    </div>
+
+    <div class="sensor-container">
+        <div id="deviceStatus" class="status-card pulse">
+            <div class="fingerprint-sensor">
+                <div class="sensor-animation">
+                    <img src="{% static 'img/logo.png' %}" class="sensor-logo" alt="Logo">
+                    <div class="ripple-effect"></div>
+                </div>
+              
+            </div>
+        </div>
+
+        <div id="captureSection" class="action-buttons" >
+            <button id="btnEntrada" class="gym-btn entrance-btn">
+                <span>Registrar Entrada</span>
+                <i class="fas fa-sign-in-alt"></i>
+            </button>
+            <button id="btnSalida" class="gym-btn exit-btn">
+                <span>Registrar Salida</span>
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </div>
+      <div class="status-content">
+                    <span class="status-text">Conectando al sensor...</span>
+                   
+                </div>
+
+    <div id="progress" class="progress-container">
+        <div class="progress-bar"></div>
+        <span>Procesando huella...</span>
+    </div>
+
+    <div id="result" class="result-container"></div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const state = { template: null };
+    const deviceStatus = document.getElementById('deviceStatus');
+    const captureSection = document.getElementById('captureSection');
+    const progress = document.getElementById('progress');
+    const result = document.getElementById('result');
+    const btnEntrada = document.getElementById('btnEntrada');
+    const btnSalida = document.getElementById('btnSalida');
+
+    // Inicializar dispositivo
+    const initDevice = async () => {
+        try {
+            const response = await fetch('http://localhost:9000/init', { method: 'POST' });
+            document.querySelector('.status-text').innerText = response.ok ? 'Dispositivo conectado' : 'Error de conexión';
+            captureSection.style.display = 'block';
+        } catch (error) {
+            deviceStatus.innerHTML = 'Error de conexión al dispositivo';
+        }
+    };
+
+    // Capturar huella
+    const captureFingerprint = async () => {
+        const res = await fetch('http://localhost:9000/capture', { method: 'POST' });
+        if (!res.ok) throw new Error('Error al capturar la huella');
+        return res.json().then(data => data.template);
+    };
+
+    // Función para registrar asistencia
+    const registrarAsistencia = async (tipo) => {
+        progress.style.display = 'block';
+        try {
+            const template = await captureFingerprint();
+            state.template = template;
+
+            // Verificar si la huella está registrada
+            const verifyRes = await fetch("{% url 'verificar_huella' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ template: state.template })
+            });
+            const verifyData = await verifyRes.json();
+
+            if (!verifyData.existe) {
+                throw new Error('Huella no registrada');
+            }
+
+            // Registrar asistencia
+            const asistenciaRes = await fetch("{% url 'registrar_asistencia' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    user_id: verifyData.usuario.id,
+                    tipo: tipo // 'E' para entrada, 'S' para salida
+                })
+            });
+            const asistenciaData = await asistenciaRes.json();
+
+            if (asistenciaData.status === 'success') {
+                result.innerHTML = `<div class="alert alert-success">${asistenciaData.mensaje || 'Asistencia registrada exitosamente'} a las ${asistenciaData.hora}</div>`;
+            } else {
+                result.innerHTML = `<div class="alert alert-danger">Error: ${asistenciaData.error}</div>`;
+            }
+        } catch (e) {
+            result.innerHTML = `<div class="alert alert-danger">Error: ${e.message}</div>`;
+        } finally {
+            progress.style.display = 'none';
+        }
+    };
+
+    btnEntrada.addEventListener('click', () => registrarAsistencia('E'));
+    btnSalida.addEventListener('click', () => registrarAsistencia('S'));
+
+    initDevice();
+});
+</script>
+{% endblock %}

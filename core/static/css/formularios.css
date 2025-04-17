@@ -1,0 +1,204 @@
+
+:root {
+    --primary-color: #FF4655;
+    --secondary-color: #2B2D42;
+    --accent-color: #00FF88;
+    --background-gradient: linear-gradient(135deg, #1A1A1A 0%, #2B2B2B 100%);
+    --input-bg: #363636;
+    --text-light: #FFFFFF;
+    --warning-color: #FFA726;
+}
+
+.gym-form-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--background-gradient);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+
+.form-title {
+    font-size: 2.5rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+}
+
+.form-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 2rem;
+    box-shadow: 0 0 20px rgba(255,70,85,0.3);
+}
+
+.form-card {
+    background: #2B2B2B;
+    border-radius: 15px;
+    padding: 2rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-group input, .input-group select {
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    background: var(--input-bg);
+    border: 2px solid #444;
+    border-radius: 8px;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus, .input-group select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(255,70,85,0.3);
+    outline: none;
+}
+
+.input-group i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.input-group input:focus + i {
+    color: var(--primary-color);
+}
+
+.form-error {
+    background: #FF465520;
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-light);
+}
+
+.form-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.form-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.primary-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #CC2A3A 100%);
+}
+
+.warning-btn {
+    background: linear-gradient(135deg, var(--warning-color) 0%, #F57C00 100%);
+}
+
+.secondary-btn {
+    background: #444;
+}
+
+.form-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.required {
+    color: var(--primary-color);
+    margin-left: 3px;
+}
+
+/* Animaciones */
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.animate-slide-down {
+    animation: slideIn 0.6s ease-out;
+}
+
+.animate-shake {
+    animation: shake 0.4s ease-in-out;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-title {
+        font-size: 2rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .gym-form-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+}
