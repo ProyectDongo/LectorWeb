@@ -420,3 +420,49 @@ def eliminar_usuario(request, usuario_id):
         usuario.delete()
         return redirect('home')  # Redirige a la página principal tras eliminar
     return render(request, 'confirmacion.html', {'usuario': usuario})
+
+
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def registrar_entrada_rut(request):
+    try:
+        data = json.loads(request.body)
+        rut = data.get('rut')
+        if not rut:
+            return JsonResponse({'error': 'RUT no proporcionado'}, status=400)
+
+        usuario = Usuario.objects.get(rut=rut)
+        hoy = timezone.now().date()
+
+        # Verificar estado del usuario
+        if not usuario.es_activo:
+            return JsonResponse({'error': 'Usuario inactivo'}, status=400)
+        if usuario.fecha_vencimiento < hoy:
+            return JsonResponse({'error': 'Membresía expirada'}, status=400)
+
+        # Validar límite de entradas diarias
+        entradas_hoy = Asistencia.objects.filter(
+            usuario=usuario,
+            tipo='E',
+            fecha_hora__date=hoy
+        )
+        if entradas_hoy.count() >= 3:
+            return JsonResponse({'error': 'Límite de 3 entradas diarias alcanzado'}, status=400)
+
+        # Registrar entrada
+        Asistencia.objects.create(
+            usuario=usuario,
+            tipo='E',
+            fecha_hora=timezone.now()
+        )
+
+        return JsonResponse({
+            'status': 'success',
+            'usuario_nombre': usuario.get_full_name()
+        })
+    except Usuario.DoesNotExist:
+        return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

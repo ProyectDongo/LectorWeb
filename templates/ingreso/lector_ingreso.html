@@ -4,11 +4,24 @@
 {% block title %}Registro de Asistencia - PowerFit Gym{% endblock %}
 
 {% block content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
 <link rel="stylesheet" href="{% static 'css/ingreso.css' %}">
 <div class="attendance-container">
     <!-- Logo con efecto rojo -->
     <div class="logo-container">
-        <img src="{% static 'img/rojo.sin.png' %}" class="main-logo" alt="PowerFit">
+        <img src="{% static 'img/BULLGYMM.png' %}" class="main-logo" alt="PowerFit">
         <div class="logo-glow"></div>
     </div>
 
@@ -22,6 +35,22 @@
             <i class="fas fa-sign-out-alt"></i>
             <span>Registrar Salida</span>
         </button>
+      
+    </div>
+      <button id="btnRegistrarRut" class="gym-btn rut-btn">
+        <i class="fas fa-id-card"></i>
+        <span>Registrar por RUT</span>
+    </button>
+    <!-- Modal para ingresar RUT -->
+    <div id="rutModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>INGRESE  RUT</h2>
+            <form id="rutForm">
+                <input type="text" id="rutInput" placeholder="Ingrese RUT (ej: 12345678-9)" required>
+                <button type="submit" class="gym-btn entrance-btn">Registrar </button>
+            </form>
+        </div>
     </div>
 
     <!-- Estado y resultados -->
@@ -34,6 +63,18 @@
     </div>
     <div id="result" class="result-container"></div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 <style>
@@ -57,8 +98,8 @@ body {
 
 .logo-container {
     position: relative;
-    width: 280px;
-    height: 280px;
+    width: 380px;
+    height: 380px;
     margin-bottom: 1rem;
 }
 
@@ -167,7 +208,11 @@ body {
     font-weight: 500;
     backdrop-filter: blur(5px);
 }
+
+
+
 /* Estilos responsivos */
+
 @media (max-width: 768px) {
     .action-buttons {
         grid-template-columns: 1fr;
@@ -189,38 +234,103 @@ body {
     background: linear-gradient(135deg, rgba(40,40,40,0.9), rgba(25,25,25,0.9));
     box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
+.rut-btn {
+    background: linear-gradient(135deg, rgba(255, 153, 51, 0.9), rgba(204, 102, 0, 0.9));
+    box-shadow: 0 4px 20px rgba(255, 153, 51, 0.3);
+}
+
+.rut-btn:hover {
+    transform: translateY(-5px) scale(1.02);
+    opacity: 0.95;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: linear-gradient(135deg, rgba(40,40,40,0.95), rgba(25,25,25,0.95));
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    color: white;
+}
+
+.close {
+    color: #ff4655;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #ff7a85;
+    text-decoration: none;
+}
+
+#rutForm input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    font-size: 1rem;
+}
 
 </style>
+
+
+
+
+
+
+
+
+
+
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const state = { template: null };
-    const deviceStatus = document.getElementById('deviceStatus');
-    const captureSection = document.getElementById('captureSection');
+    const statusText = document.querySelector('.status-text');
     const progress = document.getElementById('progress');
     const result = document.getElementById('result');
     const btnEntrada = document.getElementById('btnEntrada');
     const btnSalida = document.getElementById('btnSalida');
+    const logoImg = document.querySelector('.main-logo');
+    const logoGlow = document.querySelector('.logo-glow');
+    const originalLogoSrc = "{% static 'img/BULLGYMM.png' %}";
+    const originalGlowBackground = 'radial-gradient(circle, rgba(255,70,85,0.4) 0%, transparent 70%)';
+
+    // Función para cambiar el logo y el glow a verde por 10 segundos
+    function changeLogoToGreen() {
+        logoImg.src = "{% static 'img/BULLGYMHulk.png' %}";
+        logoGlow.style.background = 'radial-gradient(circle, rgba(0,255,0,0.4) 0%, transparent 70%)';
+        setTimeout(() => {
+            logoImg.src = originalLogoSrc;
+            logoGlow.style.background = originalGlowBackground;
+        }, 10000); // 10 segundos
+    }
 
     // Inicializar dispositivo
-   const initDevice = async () => {
-        try {
-            const response = await fetch('http://localhost:9000/init', { method: 'POST' });
-            if (response.ok) {
-                statusText.innerText = 'Dispositivo conectado';
-                sensorAnimation.classList.add('connected');
-                captureSection.style.display = 'block';
-            } else {
-                statusText.innerText = 'Error de conexión';
-                sensorAnimation.classList.remove('connected');
-                captureSection.style.display = 'none';
-            }
-        } catch (error) {
-            statusText.innerText = 'Error de conexión al dispositivo'; // Solo actualiza el texto
-            sensorAnimation.classList.remove('connected');
-            captureSection.style.display = 'none';
-        }
-    };
+   
+
     // Capturar huella
     const captureFingerprint = async () => {
         const res = await fetch('http://localhost:9000/capture', { method: 'POST' });
@@ -266,6 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (asistenciaData.status === 'success') {
                 result.innerHTML = `<div class="alert alert-success">${asistenciaData.mensaje || 'Asistencia registrada exitosamente'} a las ${asistenciaData.hora}</div>`;
+                changeLogoToGreen(); // Cambiar logo y glow a verde
             } else {
                 result.innerHTML = `<div class="alert alert-danger">Error: ${asistenciaData.error}</div>`;
             }
@@ -279,9 +390,94 @@ document.addEventListener('DOMContentLoaded', () => {
     btnEntrada.addEventListener('click', () => registrarAsistencia('E'));
     btnSalida.addEventListener('click', () => registrarAsistencia('S'));
 
-    initDevice();
+
+});
+
+// Manejo del modal de RUT
+const rutModal = document.getElementById('rutModal');
+const btnRegistrarRut = document.getElementById('btnRegistrarRut');
+const closeModal = document.querySelector('.close');
+const rutForm = document.getElementById('rutForm');
+const rutInput = document.getElementById('rutInput');
+const result = document.getElementById('result');
+const logoImg = document.querySelector('.main-logo');
+const logoGlow = document.querySelector('.logo-glow');
+const originalLogoSrc = "{% static 'img/BULLGYMM.png' %}";
+const originalGlowBackground = 'radial-gradient(circle, rgba(255,70,85,0.4) 0%, transparent 70%)';
+
+// Función para cambiar el logo y el glow a verde por 10 segundos
+function changeLogoToGreen() {
+    logoImg.src = "{% static 'img/BULLGYMHulk.png' %}";
+    logoGlow.style.background = 'radial-gradient(circle, rgba(0,255,0,0.4) 0%, transparent 70%)';
+    setTimeout(() => {
+        logoImg.src = originalLogoSrc;
+        logoGlow.style.background = originalGlowBackground;
+    }, 10000); // 10 segundos
+}
+
+// Mostrar modal al hacer clic en el botón
+btnRegistrarRut.addEventListener('click', () => {
+    rutModal.style.display = 'block';
+});
+
+// Cerrar modal al hacer clic en la X
+closeModal.addEventListener('click', () => {
+    rutModal.style.display = 'none';
+    rutInput.value = '';
+});
+
+// Cerrar modal al hacer clic fuera del contenido
+window.addEventListener('click', (event) => {
+    if (event.target === rutModal) {
+        rutModal.style.display = 'none';
+        rutInput.value = '';
+    }
+});
+
+// Manejar envío del formulario de RUT
+rutForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const rut = rutInput.value.trim();
+    if (!rut) {
+        result.innerHTML = `<div class="alert alert-danger">Por favor, ingrese un RUT</div>`;
+        return;
+    }
+
+    try {
+        const response = await fetch('/registrar_entrada_rut/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ rut: rut })
+        });
+        const data = await response.json();
+        if (data.status === 'success') {
+            result.innerHTML = `<div class="alert alert-success">Bienvenido, ${data.usuario_nombre}</div>`;
+            rutModal.style.display = 'none';
+            rutInput.value = '';
+            changeLogoToGreen(); // Cambiar logo y glow a verde
+        } else {
+            result.innerHTML = `<div class="alert alert-danger">Error: ${data.error}</div>`;
+        }
+    } catch (error) {
+        result.innerHTML = `<div class="alert alert-danger">Error al registrar entrada</div>`;
+        console.error('Error en registro por RUT:', error);
+    }
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
 
 <style >
 {% load static %}
