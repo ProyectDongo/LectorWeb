@@ -6,46 +6,192 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/ingreso.css' %}">
 <div class="attendance-container">
-    <div class="attendance-header">
-        
-        <h1 class="animated-title">Registro de Asistencia</h1>
-        <p class="instruction-text">Coloque su dedo en el sensor para registrar su asistencia</p>
+    <!-- Logo con efecto rojo -->
+    <div class="logo-container">
+        <img src="{% static 'img/rojo.sin.png' %}" class="main-logo" alt="PowerFit">
+        <div class="logo-glow"></div>
     </div>
 
-    <div class="sensor-container">
-        <div id="deviceStatus" class="status-card pulse">
-            <div class="fingerprint-sensor">
-                <div class="sensor-animation">
-                    <img src="{% static 'img/logo.png' %}" class="sensor-logo" alt="Logo">
-                    <div class="ripple-effect"></div>
-                </div>
-              
-            </div>
-        </div>
-
-        <div id="captureSection" class="action-buttons" >
-            <button id="btnEntrada" class="gym-btn entrance-btn">
-                <span>Registrar Entrada</span>
-                <i class="fas fa-sign-in-alt"></i>
-            </button>
-            <button id="btnSalida" class="gym-btn exit-btn">
-                <span>Registrar Salida</span>
-                <i class="fas fa-sign-out-alt"></i>
-            </button>
-        </div>
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+        <button id="btnEntrada" class="gym-btn entrance-btn">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Registrar Entrada</span>
+        </button>
+        <button id="btnSalida" class="gym-btn exit-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Registrar Salida</span>
+        </button>
     </div>
-      <div class="status-content">
-                    <span class="status-text">Conectando al sensor...</span>
-                   
-                </div>
 
+    <!-- Estado y resultados -->
+    <div class="status-content">
+        <span class="status-text">esperando...</span>
+    </div>
     <div id="progress" class="progress-container">
         <div class="progress-bar"></div>
-        <span>Procesando huella...</span>
+        <span class="processing-text">Procesando huella...</span>
     </div>
-
     <div id="result" class="result-container"></div>
 </div>
+
+
+<style>
+{% load static %}
+body {
+    background: url("{% static 'img/negro.png' %}") center/cover fixed;
+    backdrop-filter: blur(12px);
+    min-height: 100vh;
+    margin: 0;
+}
+
+.attendance-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    gap: 2rem;
+}
+
+.logo-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin-bottom: 1rem;
+}
+
+.main-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 25px rgba(255, 70, 85, 0.8));
+    animation: float 3s ease-in-out infinite;
+}
+
+.logo-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(255,70,85,0.4) 0%, transparent 70%);
+    animation: glow-pulse 2.5s infinite;
+}
+
+@keyframes glow-pulse {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.3; transform: translate(-50%, -50%) scale(1.3); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px 0;
+}
+
+.gym-btn {
+    padding: 1.5rem;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 80px;
+}
+
+.entrance-btn {
+    background: linear-gradient(135deg, rgba(255,70,85,0.9), rgba(179, 19, 18, 0.9));
+    box-shadow: 0 4px 20px rgba(255,70,85,0.3);
+}
+
+.exit-btn {
+    background: linear-gradient(135deg, rgba(40,40,40,0.9), rgba(25,25,25,0.9));
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.back-btn {
+    background: linear-gradient(135deg, rgba(255,70,85,0.5), rgba(179, 19, 18, 0.5));
+    box-shadow: 0 4px 15px rgba(255,70,85,0.2);
+}
+
+.gym-btn:hover {
+    transform: translateY(-5px) scale(1.02);
+    opacity: 0.95;
+}
+
+.progress-container {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+    margin: 1rem 0;
+}
+
+.progress-bar {
+    height: 5px;
+    background: linear-gradient(90deg, #ff4655, #ff7a85);
+    animation: progress 2s ease-in-out;
+}
+
+.status-content {
+    font-size: 1.2rem;
+    color: rgba(255,255,255,0.9);
+    text-align: center;
+}
+
+.result-container {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.alert-success, .alert-danger {
+    padding: 1.2rem;
+    border-radius: 10px;
+    font-weight: 500;
+    backdrop-filter: blur(5px);
+}
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .action-buttons {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+    }
+    
+    .gym-btn {
+        min-height: 70px;
+        font-size: 1rem;
+    }
+}
+
+.entrance-btn {
+    background: linear-gradient(135deg, rgba(255,70,85,0.9), rgba(179, 19, 18, 0.9));
+    box-shadow: 0 4px 20px rgba(255,70,85,0.3);
+}
+
+.exit-btn {
+    background: linear-gradient(135deg, rgba(40,40,40,0.9), rgba(25,25,25,0.9));
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const state = { template: null };
@@ -57,16 +203,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnSalida = document.getElementById('btnSalida');
 
     // Inicializar dispositivo
-    const initDevice = async () => {
+   const initDevice = async () => {
         try {
             const response = await fetch('http://localhost:9000/init', { method: 'POST' });
-            document.querySelector('.status-text').innerText = response.ok ? 'Dispositivo conectado' : 'Error de conexión';
-            captureSection.style.display = 'block';
+            if (response.ok) {
+                statusText.innerText = 'Dispositivo conectado';
+                sensorAnimation.classList.add('connected');
+                captureSection.style.display = 'block';
+            } else {
+                statusText.innerText = 'Error de conexión';
+                sensorAnimation.classList.remove('connected');
+                captureSection.style.display = 'none';
+            }
         } catch (error) {
-            deviceStatus.innerHTML = 'Error de conexión al dispositivo';
+            statusText.innerText = 'Error de conexión al dispositivo'; // Solo actualiza el texto
+            sensorAnimation.classList.remove('connected');
+            captureSection.style.display = 'none';
         }
     };
-
     // Capturar huella
     const captureFingerprint = async () => {
         const res = await fetch('http://localhost:9000/capture', { method: 'POST' });
@@ -128,4 +282,14 @@ document.addEventListener('DOMContentLoaded', () => {
     initDevice();
 });
 </script>
+
+<style >
+{% load static %}
+body {
+    background: url("{% static 'img/negro.png' %}") center/cover fixed;
+    backdrop-filter: blur(8px);
+    min-height: 100vh;
+}
+</style>
+
 {% endblock %}

@@ -24,6 +24,8 @@ class UsuarioAdmin(UserAdmin):
             'fields': ('rut', 'first_name', 'last_name', 'password1', 'password2', 'telefono', 'direccion', 'modo_pago'),
         }),
     )
+    # Permitir edición directa en la lista
+    list_editable = ('fecha_vencimiento', 'es_activo')
 
 # Personalización para el modelo HuellaDigital
 class HuellaDigitalAdmin(admin.ModelAdmin):

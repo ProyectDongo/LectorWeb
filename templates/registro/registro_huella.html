@@ -3,104 +3,246 @@
 {% block title %}Registro Biométrico{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow-lg glassmorphism-card">
-        <div class="card-header bg-gradient-primary text-white">
-            <h3 class="mb-0">
-                <i class="bi bi-fingerprint me-2"></i>Registro de Huella - {{ usuario.get_full_name }}
-            </h3>
-        </div>
-        
-        <div class="card-body">
-            <div class="row g-4">
-                <!-- Paso 1 -->
-                <div class="col-md-6" id="step1-container">
-                    <div class="card h-100">
-                        <div class="card-header bg-primary text-white">
-                            Paso 1: Capturar Huella 1
-                        </div>
-                        <div class="card-body text-center">
-                            <div class="fingerprint-guide mb-3">
-                                <i class="bi bi-fingerprint fs-1 text-primary"></i>
-                                <div class="scan-animation"></div>
-                            </div>
-                            <button id="btnCapture1" class="btn btn-primary w-100 btn-capture">
-                                <i class="bi bi-record-circle me-2"></i>Capturar Ahora
-                            </button>
-                            <div id="status1" class="mt-3 small text-muted"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Paso 2 -->
-                <div class="col-md-6" id="step2-container">
-                    <div class="card h-100">
-                        <div class="card-header bg-primary text-white">
-                            Paso 2: Capturar Huella 2
-                        </div>
-                        <div class="card-body text-center">
-                            <div class="fingerprint-guide mb-3">
-                                <i class="bi bi-fingerprint fs-1 text-primary"></i>
-                                <div class="scan-animation"></div>
-                            </div>
-                            <button id="btnCapture2" class="btn btn-primary w-100 btn-capture" disabled>
-                                <i class="bi bi-record-circle me-2"></i>Capturar Ahora
-                            </button>
-                            <div id="status2" class="mt-3 small text-muted"></div>
-                        </div>
-                    </div>
-                </div>
+<div class="container-fluid gym-background">
+    <div class="container min-vh-100 d-flex align-items-center justify-content-center">
+        <div class="card gym-card shadow-lg">
+            <div class="card-header gym-card-header">
+                <h3 class="mb-0 gym-title">
+                    <i class="bi bi-fingerprint me-2"></i>Registro de Huella - {{ usuario.get_full_name }}
+                </h3>
             </div>
-
-            <!-- Sección de Resultado -->
-            <div id="final-result" class="mt-4 text-center" style="display: none;">
-                <button id="btnRegister" class="btn btn-success btn-lg" disabled>
-                    <i class="bi bi-save me-2"></i>Registrar Huellas
-                </button>
-                <div id="final-status" class="mt-3"></div>
-            </div>
-
-            <!-- CSRF Token -->
-            {% csrf_token %}
             
-            <!-- Botón de regreso -->
-            <div class="text-center mt-5">
-                <a href="{% url 'home' %}" 
-                   class="btn btn-outline-primary btn-back">
-                    <i class="bi bi-arrow-left me-2"></i>Volver al panel
-                </a>
+            <div class="card-body gym-card-body">
+                <div class="row g-4">
+                    <!-- Paso 1 -->
+                    <div class="col-md-6" id="step1-container">
+                        <div class="card h-100 gym-step-card">
+                            <div class="card-header gym-step-header">
+                                <span class="step-number">01</span>
+                                Capturar Huella 1
+                            </div>
+                            <div class="card-body text-center position-relative">
+                                <div class="fingerprint-guide mb-3">
+                                    <div class="hexagon-wrapper">
+                                        <div class="hexagon red-pulse">
+                                            <i class="bi bi-fingerprint"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button id="btnCapture1" class="btn btn-gym-red w-100 btn-capture">
+                                    <i class="bi bi-record-circle me-2"></i>Capturar Ahora
+                                </button>
+                                <div id="status1" class="mt-3 gym-status"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 2 -->
+                    <div class="col-md-6" id="step2-container">
+                        <div class="card h-100 gym-step-card">
+                            <div class="card-header gym-step-header">
+                                <span class="step-number">02</span>
+                                Capturar Huella 2
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="fingerprint-guide mb-3">
+                                    <div class="hexagon-wrapper">
+                                        <div class="hexagon red-pulse">
+                                            <i class="bi bi-fingerprint"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button id="btnCapture2" class="btn btn-gym-red w-100 btn-capture" disabled>
+                                    <i class="bi bi-record-circle me-2"></i>Capturar Ahora
+                                </button>
+                                <div id="status2" class="mt-3 gym-status"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de Resultado -->
+                <div id="final-result" class="mt-4 text-center" style="display: none;">
+                    <button id="btnRegister" class="btn btn-gym-success" disabled>
+                        <i class="bi bi-save me-2"></i>Registrar Huellas
+                    </button>
+                    <div id="final-status" class="mt-3 gym-status"></div>
+                </div>
+
+                <!-- CSRF Token -->
+                {% csrf_token %}
+                
+                <!-- Botón de regreso -->
+                <div class="text-center mt-5">
+                    <a href="{% url 'home' %}" 
+                       class="btn btn-gym-outline">
+                        <i class="bi bi-arrow-left me-2"></i>Volver al panel
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-.glassmorphism-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
+
+.gym-background {
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8)),
+                url('{% static "images/gym-bg.jpg" %}') center/cover fixed;
+    min-height: 100vh;
 }
 
-.bg-gradient-primary {
-    background: linear-gradient(135deg, #3b82f6, #6366f1) !important;
+.gym-card {
+    background: rgba(10, 10, 10, 0.9);
+    border-radius: 15px;
+    border: 2px solid #ff0000;
+    width: 800px;
+    backdrop-filter: blur(10px);
+    font-family: 'Roboto Condensed', sans-serif;
 }
 
-@keyframes scanning {
-    0% { opacity: 0; transform: scale(0.8); }
-    50% { opacity: 1; transform: scale(1); }
-    100% { opacity: 0; transform: scale(0.8); }
+.gym-card-header {
+    background: linear-gradient(135deg, #ff0000, #8b0000);
+    border-bottom: 3px solid #ff4444;
+    position: relative;
+    overflow: hidden;
 }
 
-.scan-animation {
-    animation: scanning 2s infinite;
+.gym-card-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -25%;
+    width: 150%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 15px,
+        rgba(255, 0, 0, 0.1) 15px,
+        rgba(255, 0, 0, 0.1) 30px
+    );
 }
 
-.btn-capture:disabled {
-    opacity: 0.6;
-    background-color: #6c757d;
-    border-color: #6c757d;
+.gym-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.gym-step-card {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    transition: transform 0.3s;
+}
+
+.gym-step-card:hover {
+    transform: translateY(-5px);
+}
+
+.gym-step-header {
+    background: linear-gradient(135deg, #2b2b2b, #1a1a1a);
+    border-bottom: 2px solid #ff0000;
+    font-weight: 700;
+    color: #ff4444;
+    position: relative;
+}
+
+.step-number {
+    background: #ff0000;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.hexagon-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+
+.hexagon {
+    width: 100%;
+    height: 100%;
+    background: #1a1a1a;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ff0000;
+    position: relative;
+}
+
+.hexagon i {
+    font-size: 3.5rem;
+    color: #ff4444;
+}
+
+.red-pulse::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: rgba(255, 0, 0, 0.1);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.2; transform: scale(1.05); }
+    100% { opacity: 0.5; transform: scale(1); }
+}
+
+.btn-gym-red {
+    background: linear-gradient(135deg, #ff0000, #cc0000);
+    border: none;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+}
+
+.btn-gym-red:hover {
+    background: linear-gradient(135deg, #cc0000, #990000);
+    transform: translateY(-2px);
+}
+
+.btn-gym-success {
+    background: linear-gradient(135deg, #00ff00, #009900);
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.btn-gym-outline {
+    border: 2px solid #ff0000;
+    color: #ff0000;
+    font-weight: 700;
+}
+
+.btn-gym-outline:hover {
+    background: #ff0000;
+    color: white;
+}
+
+.gym-status {
+    color: #ff4444;
+    font-weight: 500;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+body {
+    background: url("{% static 'img/negro.png' %}") center/cover fixed;
+    backdrop-filter: blur(8px);
+    min-height: 100vh;
 }
 </style>
 

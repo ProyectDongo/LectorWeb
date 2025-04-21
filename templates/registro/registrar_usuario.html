@@ -3,18 +3,23 @@
 {% load static %}
 {% block content %}
 <div class="gym-form-container">
-<link rel="stylesheet" href="{% static 'css/formularios.css' %}">
+    <link rel="stylesheet" href="{% static 'css/formularios.css' %}">
+    
+    <!-- Encabezado del Formulario -->
     <div class="form-header animate-slide-down">
-        <h1 class="form-title">Nuevo Miembro</h1>
-        <div class="form-icon">
-            <i class="fas fa-dumbbell"></i>
+        <div class="header-gradient">
+            <h1 class="form-title">Nuevo Miembro</h1>
+            
         </div>
     </div>
 
+    <!-- Errores del Formulario -->
     {% if form.errors %}
     <div class="form-error animate-shake">
-        <i class="fas fa-exclamation-triangle"></i>
-        <div>
+        <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="error-content">
             {% for field in form %}
                 {% for error in field.errors %}
                     <p>{{ error }}</p>
@@ -24,68 +29,98 @@
     </div>
     {% endif %}
 
+    <!-- Cuerpo del Formulario -->
     <div class="form-card animate-fade-in">
         <form method="post" class="member-form">
             {% csrf_token %}
+            
             <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">RUT <span class="required">*</span></label>
-                    <div class="input-group">
-                        {{ form.rut }}
-                        <i class="fas fa-id-card"></i>
+                <!-- Columna Izquierda -->
+                <div class="form-column">
+                    <div class="form-group">
+                        <label class="form-label">RUT <span class="required">*</span></label>
+                        <div class="input-group">
+                            {{ form.rut }}
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nombre</label>
+                        <div class="input-group">
+                            {{ form.first_name }}
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Apellido</label>
+                        <div class="input-group">
+                            {{ form.last_name }}
+                            <i class="fas fa-user-tag"></i>
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Nombre</label>
-                    <div class="input-group">
-                        {{ form.first_name }}
-                        <i class="fas fa-user"></i>
+                <!-- Columna Derecha -->
+                <div class="form-column">
+                    <div class="form-group">
+                        <label class="form-label">Teléfono</label>
+                        <div class="input-group">
+                            {{ form.telefono }}
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label">Apellido</label>
-                    <div class="input-group">
-                        {{ form.last_name }}
-                        <i class="fas fa-user-tag"></i>
+                    <div class="form-group">
+                        <label class="form-label">Dirección</label>
+                        <div class="input-group">
+                            {{ form.direccion }}
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label">Teléfono</label>
-                    <div class="input-group">
-                        {{ form.telefono }}
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Dirección</label>
-                    <div class="input-group" >
-                        {{ form.direccion }}
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Membresía <span class="required">*</span></label>
-                    <div class="input-group">
-                        {{ form.modo_pago }}
-                        <i class="fas fa-calendar-star"></i>
+                    <div class="form-group">
+                        <label class="form-label">Membresía <span class="required">*</span></label>
+                        <div class="input-group select-wrapper">
+                            {{ form.modo_pago }}
+                            <i class="fas fa-calendar-star"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Acciones del Formulario -->
             <div class="form-actions">
                 <button type="submit" class="form-btn primary-btn animate-hover">
-                    <i class="fas fa-user-plus"></i> Registrar Miembro
+                    <i class="fas fa-save"></i> Guardar Miembro
                 </button>
                 <a href="{% url 'home' %}" class="form-btn secondary-btn animate-hover">
-                    <i class="fas fa-home"></i> Volver al Inicio
+                    <i class="fas fa-arrow-left"></i> Volver al Inicio
                 </a>
             </div>
         </form>
     </div>
 </div>
+
+<style
+{% load static %}>
+body {
+  background-image: url("{% static 'img/rojo.png' %}");
+  /* …otras propiedades… */
+}
+.input-group textarea {
+    width: 100%;
+    padding: 0.9rem 1.2rem;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+</style>
+
 {% endblock %}
+
+

@@ -45,6 +45,19 @@
     box-shadow: 0 0 20px rgba(255,70,85,0.3);
 }
 
+.input-group input, 
+.input-group select,
+.input-group textarea {
+    width: 100%;
+    padding: 0.9rem 1.2rem;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
 .form-card {
     background: #2B2B2B;
     border-radius: 15px;
@@ -63,15 +76,22 @@
 
 .form-label {
     display: block;
-    color: var(--text-light);
+    color: rgba(255,255,255,0.9);
     margin-bottom: 0.5rem;
-    font-weight: 600;
+    font-weight: 500;
+    font-size: 0.95rem;
 }
 
 .input-group {
     position: relative;
 }
 
+.input-group input:focus,
+.input-group select:focus {
+    background: rgba(255,255,255,0.12);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(255,70,85,0.25);
+}
 .input-group input, .input-group select {
     width: 100%;
     padding: 0.8rem 1.2rem;

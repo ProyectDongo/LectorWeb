@@ -13,13 +13,19 @@ class Usuario(AbstractUser):
         choices=[(1, '1 mes'), (2, '2 meses'), (3, '3 meses')], 
         default=1
     )
-    fecha_vencimiento = models.DateField()
+    fecha_vencimiento = models.DateField(blank=True, null=True)
     es_activo = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        self.fecha_vencimiento = self.fecha_ingreso + relativedelta(months=self.modo_pago)
+        self.username = self.rut.replace('.', '').replace('-', '').upper()
+        self.set_unusable_password()
+        
+        # Calcular fecha_vencimiento solo al crear el usuario, si no se especifica manualmente
+        if not self.pk and not self.fecha_vencimiento:
+            self.fecha_vencimiento = self.fecha_ingreso + relativedelta(months=self.modo_pago)
+        
         super().save(*args, **kwargs)
-
+        
 class HuellaDigital(models.Model):
     usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='huella')
     template = models.BinaryField()

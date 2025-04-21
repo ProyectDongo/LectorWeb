@@ -1,103 +1,34 @@
 
-:root {
-    --primary-color: #ff4655;
-    --secondary-color: #1a1a1a;
-    --accent-color: #00ff88;
-    --gradient-bg: linear-gradient(135deg, #2b2b2b 0%, #1a1a1a 100%);
-    --text-light: #ffffff;
-}
 
+/* CSS from ingreso.css */
 .attendance-container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: var(--gradient-bg);
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.attendance-header {
-    text-align: center;
-    margin-bottom: 3rem;
-}
-
-.gym-logo img {
-    width: 150px;
-    margin-bottom: 1.5rem;
-    filter: drop-shadow(0 0 10px rgba(255,70,85,0.5));
-}
-
-.animated-title {
-    font-size: 2.5rem;
-    color: var(--text-light);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    animation: slideIn 1s ease-out;
-}
-
-.instruction-text {
-    color: #aaaaaa;
-    font-size: 1.1rem;
-    margin-top: 1rem;
-}
-
-
-.status-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem;
-    transition: all 0.3s ease;
-}
-
-.fingerprint-sensor {
-    position: relative;
-    width: 120px;
-    height: 120px;
-    margin: 1rem 0;
-}
-
-.sensor-animation {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    background: var(--secondary-color);
-    border: 2px solid var(--primary-color);
+    min-height: 100vh;
+    padding: 2rem;
+    background: transparent;
 }
+
+.fingerprint-container {
+    margin-bottom: 2rem;
+}
+
 
 .fa-fingerprint {
     font-size: 3.5rem;
-    color: var(--accent-color);
+    color: #00ff88;
     z-index: 2;
 }
 
 
-
-.status-content {
-    text-align: center;
-    margin-top: 1.5rem;
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
 }
-
-.status-text {
-    color: var(--text-light);
-    font-size: 1.2rem;
-    display: block;
-    margin-bottom: 1rem;
-}
-
-.status-loader {
-    width: 30px;
-    height: 30px;
-    border: 3px solid #333;
-    border-top-color: var(--accent-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
 
 .gym-btn {
     padding: 1.2rem 2rem;
@@ -112,6 +43,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.8rem;
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .gym-btn i {
@@ -119,13 +51,15 @@
 }
 
 .entrance-btn {
-    background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
-    box-shadow: 0 5px 15px rgba(0,255,136,0.3);
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.5), rgba(0, 204, 106, 0.5));
 }
 
 .exit-btn {
-    background: linear-gradient(135deg, #ff4655 0%, #cc2a3a 100%);
-    box-shadow: 0 5px 15px rgba(255,70,85,0.3);
+    background: linear-gradient(135deg, rgba(255, 70, 85, 0.5), rgba(204, 42, 58, 0.5));
+}
+
+.back-btn {
+    background: linear-gradient(135deg, rgba(42, 42, 42, 0.5), rgba(26, 26, 26, 0.5));
 }
 
 .gym-btn:hover {
@@ -133,29 +67,39 @@
     opacity: 0.9;
 }
 
-.progress-container {
+.status-content, .progress-container, .result-container {
     text-align: center;
-    margin: 2rem 0;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    color: #ffffff;
 }
 
-.progress-container.visible {
-    opacity: 1;
+.status-text {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
 }
 
 .progress-bar {
     width: 0%;
     height: 4px;
-    background: var(--accent-color);
+    background: #00ff88;
     margin: 1rem auto;
     border-radius: 2px;
     animation: progress 2s ease-in-out;
 }
 
-.result-container {
-    text-align: center;
-    min-height: 50px;
+.alert-success {
+    background-color: rgba(0, 255, 136, 0.2);
+    color: #00ff88;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-top: 1rem;
+}
+
+.alert-danger {
+    background-color: rgba(255, 70, 85, 0.2);
+    color: #ff4655;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-top: 1rem;
 }
 
 @keyframes ripple {
@@ -163,142 +107,97 @@
     100% { transform: scale(1.5); opacity: 0; }
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-@keyframes slideIn {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
-}
-
 @keyframes progress {
     0% { width: 0%; }
     100% { width: 100%; }
 }
-
-@media (max-width: 768px) {
-    .attendance-container {
-        margin: 1rem;
-        padding: 1.5rem;
-    }
-
-    .animated-title {
-        font-size: 2rem;
-    }
-
-    .action-buttons {
-        grid-template-columns: 1fr;
-    }
-
-    .gym-btn {
-        padding: 1rem;
-        font-size: 1rem;
-    }
+.sensor-logo {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+    z-index: 2;
+    position: relative;
+    filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.5));
 }
 
-#captureSection {
-    display: flex !important;
+.ripple-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    justify-content: center;
-}
-.sensor-container {
-    position: relative;
-    padding: 2rem;
-    background: #2b2b2b;
-    border-radius: 15px;
-    margin: 2rem 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center; /* Centrado vertical adicional */
-    overflow: visible; /* Permite que los efectos sobrepasen el contenedor */
+    height: 100%;
+    border: 3px solid #00ff88;
+    border-radius: 50%;
+    animation: ripple 1.5s infinite;
+    opacity: 0;
+    z-index: 1;
 }
 
-.fingerprint-sensor {
-    position: relative;
-    width: auto; /* Ancho automático para contener el círculo */
-    height: auto;
-    margin: 1rem 0;
-    display: flex;
-    justify-content: center;
+@keyframes ripple {
+    0% {
+        transform: scale(0.8);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
 }
 
-.status-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0; /* Elimina padding interno que podría desalinear */
-    transition: all 0.3s ease;
+.fingerprint-container {
+    margin-bottom: 2rem;
+    perspective: 1000px;
 }
 
 .sensor-animation {
     position: relative;
     width: 500px;
     height: 500px;
-    margin: 0 auto;
-    border-radius: 50%;
-    overflow: visible;
-    border: 2px solid var(--primary-color);
     display: flex;
-    justify-content: center;
     align-items: center;
-    background: var(--secondary-color); /* Fondo para mejor contraste */
+    justify-content: center;
+    transition: all 0.5s ease;
 }
 
 .sensor-logo {
-    width: 82%;
-    height: 82%;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-    position: absolute;
     z-index: 2;
-    pointer-events: none; /* Permite clicks a través del logo */
+    position: relative;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.5));
 }
 
-.ripple-effect {
-    position: absolute;
-    width: calc(100% + 20px); /* Compensa el crecimiento de la animación */
-    height: calc(100% + 20px);
-    border: 3px solid var(--accent-color);
-    border-radius: 50%;
-    animation: ripple 1.5s infinite;
-    z-index: 1;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* Centrado absoluto perfecto */
-    margin: 0;
-}
+
 
 @keyframes ripple {
-    0% { 
-        transform: translate(-50%, -50%) scale(1); 
-        opacity: 1; 
+    0% {
+        opacity: 0.8;
+        transform: scale(1);
+        filter: brightness(1.5) drop-shadow(0 0 10px #00ff88);
     }
-    100% { 
-        transform: translate(-50%, -50%) scale(1.8); 
-        opacity: 0; 
+    100% {
+        opacity: 0;
+        transform: scale(1.8);
+        filter: brightness(2.5) drop-shadow(0 0 30px #00ff88);
     }
 }
 
-.action-buttons {
-    width: 100%;
-    max-width: 500px;
-    margin: 2rem auto 0;
-    position: relative;
-    z-index: 3;
+/* Cuando el dispositivo está conectado */
+.sensor-animation.connected {
+    transform: scale(1.1);
 }
 
-/* Ajuste fino para alineación vertical */
-.attendance-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    justify-content: center; /* Centrado vertical general */
-    padding: 2rem 1rem;
+.sensor-animation.connected .sensor-logo {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }

@@ -1,218 +1,293 @@
+
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
-<div class="container-fluid px-4">
-    <!-- Barra de Búsqueda -->
-    <div class="row my-4">
-        <div class="col-12">
-            <form method="GET" action="{% url 'home' %}" class="mb-4">
-                <div class="input-group">
-                    <input type="text" class="form-control" 
-                           name="rut" 
-                           placeholder="Buscar por RUT (Ej: 12345678-9)" 
-                           value="{{ request.GET.rut }}">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="bi bi-search me-2"></i>Buscar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Mensaje si no se encuentra el usuario -->
-    {% if busqueda_realizada and not usuario_encontrado %}
-    <div class="alert alert-warning">
-        No se encontró ningún usuario con el RUT proporcionado.
-    </div>
-    {% endif %}
-
-    <!-- Tarjeta de Resultado -->
-    {% if usuario_encontrado %}
-    <div class="card shadow mb-4">
-        <div class="card-header bg-info text-white">
-            <h5 class="mb-0">Miembro Encontrado</h5>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>Nombre:</strong> {{ usuario_encontrado.get_full_name }}</p>
-                    <p><strong>RUT:</strong> {{ usuario_encontrado.rut }}</p>
-                    <p><strong>Teléfono:</strong> {{ usuario_encontrado.telefono }}</p>
-                </div>
-                <div class="col-md-6">
-                    <p><strong>Dirección:</strong> {{ usuario_encontrado.direccion }}</p>
-                    <p><strong>Membresía:</strong> {{ usuario_encontrado.modo_pago }} meses</p>
-                    <p><strong>Estado:</strong> {% if usuario_encontrado.es_activo %}Activo{% else %}Inactivo{% endif %}</p>
-                </div>
-            </div>
-            <div class="mt-3">
-                <a href="{% url 'editar_usuario' usuario_encontrado.id %}" 
-                   class="btn btn-warning me-2">
-                    <i class="bi bi-pencil-square me-2"></i>Modificar Datos
-                </a>
-                <a href="{% url 'registro_huella' usuario_encontrado.id %}" 
-                   class="btn btn-success">
-                    <i class="bi bi-fingerprint me-2"></i>Agregar Huella
-                </a>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    
-    <!-- Tarjetas de Estadísticas -->
-    <div class="row my-4">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Miembros Totales</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_miembros }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="bi bi-people-fill fa-2x text-primary"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Miembros Activos</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.miembros_activos }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="bi bi-person-check-fill fa-2x text-success"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Ingresos Hoy</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.ingresos_hoy }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="bi bi-door-open-fill fa-2x text-info"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Vencimientos Próximos</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.vencimientos_proximos }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="bi bi-calendar-x-fill fa-2x text-warning"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Acciones Rápidas -->
-    <div class="row my-4">
-        <div class="col-lg-4 mb-4">
-            <div class="card shadow">
-                <div class="card-header bg-gradient-primary text-white">
-                    <h5 class="mb-0">Acciones Rápidas</h5>
-                </div>
-                <div class="card-body text-center">
-                    <a href="{% url 'registrar_usuario' %}" class="btn btn-primary btn-block mb-3">
-                        <i class="bi bi-person-plus-fill me-2"></i>Nuevo Miembro
-                    </a>
-                    <a href="{% url 'lecto_ingreso' %}" class="btn btn-success btn-block mb-3">
-                        <i class="bi bi-fingerprint me-2"></i>Registro Asistencia
-                    </a>
-                    <a href="{% url 'admin:index' %}" class="btn btn-info btn-block">
-                        <i class="bi bi-gear-fill me-2"></i>Panel Administración
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Últimos Movimientos -->
-        <div class="col-lg-8">
-            <div class="card shadow">
-                <div class="card-header bg-gradient-success text-white">
-                    <h5 class="mb-0">Últimos Movimientos</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Miembro</th>
-                                    <th>RUT</th>
-                                    <th>Tipo</th>
-                                    <th>Fecha/Hora</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for asis in ultimas_asistencias %}
-                                <tr>
-                                    <td>{{ asis.usuario.get_full_name }}</td>
-                                    <td>{{ asis.usuario.rut }}</td>
-                                    <td>
-                                        {% if asis.tipo == 'E' %}
-                                            <span class="badge bg-success">Entrada</span>
-                                        {% else %}
-                                            <span class="badge bg-danger">Salida</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ asis.fecha_hora|date:"d/m/Y H:i" }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <style>
-.bg-gradient-primary {
-    background: linear-gradient(45deg, #4e73df, #224abe);
+:root {
+    --primary-color: #FF4655;
+    --secondary-color: #2C2221;
+    --accent-color: #8B2E16;
+    --text-primary: rgba(255,255,255,0.95);
 }
 
-.bg-gradient-success {
-    background: linear-gradient(45deg, #1cc88a, #13855c);
+body {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                url("{% static 'img/negro.png' %}") center fixed;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-.card {
-    border-radius: 0.5rem;
-    transition: transform 0.3s;
+.app-container {
+    background : rgba(194, 180, 180, 0);
+    display: grid;
+    grid-template-columns: 280px 1fr 280px;
+    min-height: 100vh;
+    position: relative;
 }
 
-.card:hover {
+/* Sidebars mejorados */
+.sidebar {
+    background: rgba(35, 35, 35, 0.95);
+    backdrop-filter: blur(12px);
+    padding: 1.5rem;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.main-content {
+    background: rgba(30, 30, 30, 0.85);
+    backdrop-filter: blur(8px);
+    min-height: 100vh;
+    padding: 2rem;
+    border-left: 1px solid rgba(255,255,255,0.05);
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Tarjetas modernas */
+.card-modern {
+    background: rgba(45, 45, 45, 0.65) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+.card-modern:hover {
     transform: translateY(-5px);
 }
 
-.btn-block {
+/* Mejoras en los botones */
+.btn-gradient {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+
+/* Lista de movimientos mejorada */
+.movement-item {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
     padding: 1rem;
-    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.movement-item:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateX(5px);
+}
+
+/* Estadísticas mejoradas */
+.stats-card {
+    padding: 1.5rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(255,70,85,0.15), rgba(139,46,22,0.1));
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.text-muted{
+    color: rgba(255,255,255,0.6) !important;
+}
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .app-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .sidebar {
+        position: static;
+        height: auto;
+    }
+    
+    .main-content {
+        min-height: auto;
+    }
+}
+
+/* Scroll personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.2);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
 }
 </style>
+<div class="app-container">
+    <!-- Sidebar Izquierdo -->
+    <aside class="sidebar">
+        <div class="d-flex flex-column gap-4">
+            <h4 class="text-white mb-4"><i class="bi bi-people-fill me-2"></i>Gestión de Miembros</h4>
+            
+            <form method="GET" action="{% url 'home' %}">
+                <div class="input-group">
+                    <input type="text" 
+                           class="form-control bg-dark text-white border-dark" 
+                           name="rut" 
+                           placeholder="Buscar por RUT"
+                           value="{{ request.GET.rut }}">
+                    <button class="btn btn-gradient" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <div class="d-grid gap-3">
+                <a href="{% url 'registrar_usuario' %}" class="btn btn-gradient">
+                    <i class="bi bi-person-plus me-2"></i>Nuevo Miembro
+                </a>
+                <a href="{% url 'lecto_ingreso' %}" class="btn btn-outline-light">
+                    <i class="bi bi-fingerprint me-2"></i>Registrar Asistencia
+                </a>
+            </div>
+
+            {% if usuario_encontrado %}
+            <div class="card-modern p-3 text-white mt-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="flex-grow-1">
+                        <h5>{{ usuario_encontrado.get_full_name }}</h5>
+                        <small class="text-muted">{{ usuario_encontrado.rut }}</small>
+                    </div>
+                    <span class="badge bg-{% if usuario_encontrado.es_activo %}success{% else %}danger{% endif %}">
+                        {% if usuario_encontrado.es_activo %}Activo{% else %}Inactivo{% endif %}
+                    </span>
+                </div>
+                
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'editar_usuario' usuario_encontrado.id %}" 
+                       class="btn btn-sm btn-outline-light">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{% url 'registro_huella' usuario_encontrado.id %}" 
+                       class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-fingerprint"></i>
+                    </a>
+                    <a href="{% url 'actualizar_membresia' usuario_encontrado.id %}" 
+                       class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </a>
+                    <a href="{% url 'eliminar_usuario' usuario_encontrado.id %}" 
+                       class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <!-- Estadísticas -->
+        <div class="row g-4 mb-5">
+            {% for stat in stats %}
+            <div class="col-md-6 col-xl-3">
+                <div class="stats-card text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">{{ stat.title }}</h6>
+                            <h3 class="mb-0">{{ stat.value }}</h3>
+                        </div>
+                        <i class="bi {{ stat.icon }} fs-4 text-muted"></i>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Detalle del Miembro -->
+        {% if usuario_encontrado %}
+        <div class="card-modern text-white mb-5 p-4">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <i class="bi bi-telephone fs-5 text-primary"></i>
+                        <div>
+                            <p class="mb-0"><strong>Teléfono:</strong></p>
+                            <p class="mb-0">{{ usuario_encontrado.telefono }}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-geo-alt fs-5 text-primary"></i>
+                        <div>
+                            <p class="mb-0"><strong>Dirección:</strong></p>
+                            <p class="mb-0">{{ usuario_encontrado.direccion }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <i class="bi bi-credit-card fs-5 text-primary"></i>
+                        <div>
+                            <p class="mb-0"><strong>Membresía:</strong></p>
+                            <p class="mb-0">{{ usuario_encontrado.modo_pago }} meses</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+
+    <!-- Sidebar Derecho -->
+    <aside class="sidebar">
+        <h4 class="text-white mb-4"><i class="bi bi-clock-history me-2"></i>Últimos Movimientos</h4>
+        
+        <div class="d-flex flex-column gap-3">
+            {% for asis in ultimas_asistencias %}
+            <div class="movement-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="mb-1">{{ asis.usuario.get_full_name }}</h6>
+                        <small class="text-muted">{{ asis.fecha_hora|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    <span class="badge bg-{% if asis.tipo == 'E' %}success{% else %}danger{% endif %}">
+                        {% if asis.tipo == 'E' %}E{% else %}S{% endif %}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </aside>
+</div>
+
+<script>
+// Eliminar efecto parallax del fondo
+document.querySelectorAll('.hover-effect').forEach(item => {
+    item.addEventListener('mouseover', () => {
+        item.style.transform = 'scale(1.02)';
+        item.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+    });
+    item.addEventListener('mouseout', () => {
+        item.style.transform = 'scale(1)';
+        item.style.boxShadow = 'none';
+    });
+});
+
+// Efecto parallax suave en el fondo
+window.addEventListener('scroll', function() {
+    const scrolled = window.pageYOffset;
+    document.body.style.backgroundPositionY = -(scrolled * 0.5) + 'px';
+});
+</script>
+
 {% endblock %}

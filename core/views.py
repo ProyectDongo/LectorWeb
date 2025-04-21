@@ -19,49 +19,69 @@ import requests
 import logging
 
 logger = logging.getLogger(__name__)
+
+#INGRESO DE USUARIO
+
+
+
+
+
+
+
+
+
+
+
+
 # Configure logger
+
 @login_required
 def home(request):
-    # Estadísticas para el dashboard
-    stats = {
-        'total_miembros': Usuario.objects.count(),
-        'miembros_activos': Usuario.objects.filter(es_activo=True).count(),
-        'ingresos_hoy': Asistencia.objects.filter(
-            fecha_hora__date=timezone.now().date(), 
-            tipo='E'
-        ).count(),
-        'vencimientos_proximos': Usuario.objects.filter(
-            fecha_vencimiento__range=(
-                timezone.now().date(),
-                timezone.now().date() + timezone.timedelta(days=7)
-            )  
-        ).count()
-    }
-    
-    # Últimas actividades
-    ultimas_asistencias = Asistencia.objects.select_related('usuario').order_by('-fecha_hora')[:5]
-    
-    # Búsqueda por RUT
-    rut = request.GET.get('rut', '').strip()
-    busqueda_realizada = False
+    rut = request.GET.get('rut', '')
     usuario_encontrado = None
     if rut:
-        busqueda_realizada = True
         try:
             usuario_encontrado = Usuario.objects.get(rut=rut)
-            logger.info(f'Usuario encontrado: {usuario_encontrado.id}')
         except Usuario.DoesNotExist:
-            logger.info('Usuario no encontrado')
-            usuario_encontrado = None
-        except Exception as e:
-            logger.error(f'Error al buscar usuario por RUT: {e}')
-    
+            pass
+
+    ultimas_asistencias = Asistencia.objects.order_by('-fecha_hora')[:5]
+    stats = [
+        {'title': 'Miembros Activos', 'value': Usuario.objects.filter(es_activo=True).count(), 'icon': 'bi-person-check'},
+        {'title': 'Entradas Hoy', 'value': Asistencia.objects.filter(tipo='E', fecha_hora__date=timezone.now().date()).count(), 'icon': 'bi-box-arrow-in-right'},
+        {'title': 'Salidas Hoy', 'value': Asistencia.objects.filter(tipo='S', fecha_hora__date=timezone.now().date()).count(), 'icon': 'bi-box-arrow-right'},
+        {'title': 'Total Asistencias', 'value': Asistencia.objects.count(), 'icon': 'bi-clock-history'},
+    ]
+
     return render(request, 'home/home.html', {
-        'stats': stats,
-        'ultimas_asistencias': ultimas_asistencias,
         'usuario_encontrado': usuario_encontrado,
-        'busqueda_realizada': busqueda_realizada
+        'ultimas_asistencias': ultimas_asistencias,
+        'stats': stats,
     })
+
+
+
+
+
+# Vista para actualizar membresía
+@login_required
+def actualizar_membresia(request, user_id):
+    usuario = get_object_or_404(Usuario, id=user_id)
+    hoy = timezone.now().date()
+    usuario.fecha_vencimiento = hoy + timezone.timedelta(days=30)
+    usuario.save()
+    messages.success(request, f'Membresía de {usuario.get_full_name()} actualizada por 30 días.')
+    return redirect(reverse('home/home') + f'?rut={usuario.rut}')
+
+
+
+
+
+
+
+
+
+
 
 #-------------------------------------------------------------------------------------------------
 @login_required
@@ -69,12 +89,28 @@ def registrar_usuario(request):
     if request.method == 'POST':
         form = UsuarioForm(request.POST)
         if form.is_valid():
-            usuario = form.save()
-            messages.success(request, 'Miembro registrado exitosamente!')
-            return redirect('home')  # Cambiar redirección a home
+            try:
+                usuario = form.save(commit=False)
+                # El username se establece en el método save del modelo
+                usuario.save()
+                messages.success(request, 'Miembro registrado exitosamente!')
+                return redirect('home')
+            except IntegrityError:
+                messages.error(request, 'Error: El RUT ya está en uso.')
+        else:
+            messages.error(request, 'Por favor, corrija los errores en el formulario.')
     else:
         form = UsuarioForm()
     return render(request, 'registro/registrar_usuario.html', {'form': form})
+
+
+
+
+
+
+
+
+
 
 #-------------------------------------------------------------------------------------------------
 # Vista para registrar huella digital
@@ -88,8 +124,6 @@ def registro_huella(request, user_id):
 def lecto_ingreso(request):
     usuario = request.user
     return render(request, 'ingreso/lector_ingreso.html', {'user_id': usuario.id})
-
-
 
 #-------------------------------------------------------------------------------------------------
 # Vista para registrar huella digital   
@@ -165,6 +199,20 @@ class FingerprintRegistrationView(View):
             return JsonResponse({'error': f'Error interno: {str(e)}'}, status=500)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #-------------------------------------------------------------------------------------------------
 # Vista para registrar asistencia
 @csrf_exempt
@@ -182,13 +230,18 @@ def registrar_asistencia(request):
             if not HuellaDigital.objects.filter(usuario=usuario).exists():
                 return JsonResponse({'error': 'Huella no registrada'}, status=400)
 
-            # Verificar estado del usuario (ejemplo: deudas o membresía)
+            # Verificar estado del usuario
             if not usuario.es_activo:
                 return JsonResponse({'error': 'Usuario inactivo'}, status=400)
-            if usuario.fecha_vencimiento and usuario.fecha_vencimiento < hoy:
-                return JsonResponse({'error': 'Tiene deuda o membresía expirada'}, status=400)
 
-            # Validar límites
+            # Verificar si tiene deuda (fecha_vencimiento < hoy)
+            if usuario.fecha_vencimiento < hoy:
+                return JsonResponse({'error': 'Usted tiene una deuda pendiente'}, status=400)
+
+            # Calcular días restantes de membresía
+            dias_restantes = (usuario.fecha_vencimiento - hoy).days
+
+            # Validar límites de registros diarios
             registros_hoy = Asistencia.objects.filter(
                 usuario=usuario,
                 fecha_hora__date=hoy,
@@ -211,15 +264,19 @@ def registrar_asistencia(request):
                         'error': 'No hay entrada registrada para esta salida'
                     }, status=400)
 
-            # Crear registro
+            # Crear registro de asistencia
             Asistencia.objects.create(
                 usuario=usuario,
                 tipo=tipo,
                 fecha_hora=timezone.now()
             )
 
-            # Devolver mensaje personalizado
-            mensaje = 'Bienvenido' if tipo == 'E' else 'Hasta luego'
+            # Mensaje personalizado
+            if tipo == 'E':
+                mensaje = f'Bienvenido, le quedan {dias_restantes} días de membresía'
+            else:
+                mensaje = 'Hasta luego'
+
             return JsonResponse({
                 'status': 'success',
                 'hora': timezone.now().strftime('%H:%M:%S'),
@@ -229,6 +286,21 @@ def registrar_asistencia(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #-------------------------------------------------------------------------------------------------
 #Vista para verificar huella digital
@@ -307,6 +379,24 @@ def verificar_huella(request):
     
     logger.warning(f"Método no permitido: {request.method}")
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #-------------------------------------------------------------------------------------------------
 # views.py
 @login_required
@@ -315,9 +405,18 @@ def editar_usuario(request, user_id):
     if request.method == 'POST':
         form = UsuarioForm(request.POST, instance=usuario)
         if form.is_valid():
-            form.save()
+            form.save()  # El método save del modelo ajusta el username y la contraseña
             messages.success(request, 'Datos actualizados correctamente!')
             return redirect('home')
     else:
         form = UsuarioForm(instance=usuario)
     return render(request, 'registro/editar_usuario.html', {'form': form})
+
+#-------------------------------------------------------------------------------------------------
+# Vista para eliminar usuario
+def eliminar_usuario(request, usuario_id):
+    usuario = get_object_or_404(Usuario, id=usuario_id)
+    if request.method == 'POST':
+        usuario.delete()
+        return redirect('home')  # Redirige a la página principal tras eliminar
+    return render(request, 'confirmacion.html', {'usuario': usuario})
