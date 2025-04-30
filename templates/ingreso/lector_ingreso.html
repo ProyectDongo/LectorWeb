@@ -1,59 +1,34 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block title %}Registro de Asistencia - PowerFit Gym{% endblock %}
-
 {% block content %}
-
-
-
-
-
-
-
-
-
-
-
-
-
 <link rel="stylesheet" href="{% static 'css/ingreso.css' %}">
 <div class="attendance-container">
-    <!-- Logo con efecto rojo -->
     <div class="logo-container">
         <img src="{% static 'img/BULLGYMM.png' %}" class="main-logo" alt="PowerFit">
         <div class="logo-glow"></div>
     </div>
 
-    <!-- Botones de acción -->
     <div class="action-buttons">
         <button id="btnEntrada" class="gym-btn entrance-btn">
-            <i class="fas fa-sign-in-alt"></i>
-            <span>Registrar Entrada</span>
+            <i class="fas fa-sign-in-alt"></i> <span>Registrar Entrada</span>
         </button>
-        <button id="btnSalida" class="gym-btn exit-btn">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Registrar Salida</span>
+        <button id="btnRegistrarRut" class="gym-btn rut-btn">
+            <i class="fas fa-id-card"></i> <span>Registrar por RUT</span>
         </button>
-      
     </div>
-      <button id="btnRegistrarRut" class="gym-btn rut-btn">
-        <i class="fas fa-id-card"></i>
-        <span>Registrar por RUT</span>
-    </button>
-    <!-- Modal para ingresar RUT -->
+
     <div id="rutModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>INGRESE  RUT</h2>
+            <span class="close">×</span>
+            <h2>INGRESE RUT</h2>
             <form id="rutForm">
                 <input type="text" id="rutInput" placeholder="Ingrese RUT (ej: 12345678-9)" required>
-                <button type="submit" class="gym-btn entrance-btn">Registrar </button>
+                <button type="submit" class="gym-btn entrance-btn">Registrar</button>
             </form>
         </div>
     </div>
 
-    <!-- Estado y resultados -->
     <div class="status-content">
         <span class="status-text">esperando...</span>
     </div>
@@ -64,26 +39,10 @@
     <div id="result" class="result-container"></div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 <style>
-{% load static %}
 body {
     background: url("{% static 'img/negro.png' %}") center/cover fixed;
-    backdrop-filter: blur(12px);
     min-height: 100vh;
-    margin: 0;
 }
 
 .attendance-container {
@@ -100,7 +59,6 @@ body {
     position: relative;
     width: 380px;
     height: 380px;
-    margin-bottom: 1rem;
 }
 
 .main-logo {
@@ -138,7 +96,6 @@ body {
     gap: 1.5rem;
     width: 100%;
     max-width: 600px;
-    margin: 20px 0;
 }
 
 .gym-btn {
@@ -152,7 +109,6 @@ body {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    min-height: 80px;
 }
 
 .entrance-btn {
@@ -160,14 +116,9 @@ body {
     box-shadow: 0 4px 20px rgba(255,70,85,0.3);
 }
 
-.exit-btn {
-    background: linear-gradient(135deg, rgba(40,40,40,0.9), rgba(25,25,25,0.9));
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-}
-
-.back-btn {
-    background: linear-gradient(135deg, rgba(255,70,85,0.5), rgba(179, 19, 18, 0.5));
-    box-shadow: 0 4px 15px rgba(255,70,85,0.2);
+.rut-btn {
+    background: linear-gradient(135deg, rgba(255, 153, 51, 0.9), rgba(204, 102, 0, 0.9));
+    box-shadow: 0 4px 20px rgba(255, 153, 51, 0.3);
 }
 
 .gym-btn:hover {
@@ -179,7 +130,6 @@ body {
     width: 100%;
     max-width: 400px;
     background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(5px);
     border-radius: 10px;
     margin: 1rem 0;
 }
@@ -193,7 +143,6 @@ body {
 .status-content {
     font-size: 1.2rem;
     color: rgba(255,255,255,0.9);
-    text-align: center;
 }
 
 .result-container {
@@ -205,43 +154,6 @@ body {
 .alert-success, .alert-danger {
     padding: 1.2rem;
     border-radius: 10px;
-    font-weight: 500;
-    backdrop-filter: blur(5px);
-}
-
-
-
-/* Estilos responsivos */
-
-@media (max-width: 768px) {
-    .action-buttons {
-        grid-template-columns: 1fr;
-        max-width: 400px;
-    }
-    
-    .gym-btn {
-        min-height: 70px;
-        font-size: 1rem;
-    }
-}
-
-.entrance-btn {
-    background: linear-gradient(135deg, rgba(255,70,85,0.9), rgba(179, 19, 18, 0.9));
-    box-shadow: 0 4px 20px rgba(255,70,85,0.3);
-}
-
-.exit-btn {
-    background: linear-gradient(135deg, rgba(40,40,40,0.9), rgba(25,25,25,0.9));
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-}
-.rut-btn {
-    background: linear-gradient(135deg, rgba(255, 153, 51, 0.9), rgba(204, 102, 0, 0.9));
-    box-shadow: 0 4px 20px rgba(255, 153, 51, 0.3);
-}
-
-.rut-btn:hover {
-    transform: translateY(-5px) scale(1.02);
-    opacity: 0.95;
 }
 
 .modal {
@@ -252,9 +164,7 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
     background-color: rgba(0,0,0,0.6);
-    backdrop-filter: blur(5px);
 }
 
 .modal-content {
@@ -264,7 +174,6 @@ body {
     border-radius: 15px;
     width: 90%;
     max-width: 400px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     color: white;
 }
 
@@ -276,12 +185,6 @@ body {
     cursor: pointer;
 }
 
-.close:hover,
-.close:focus {
-    color: #ff7a85;
-    text-decoration: none;
-}
-
 #rutForm input {
     width: 100%;
     padding: 10px;
@@ -290,20 +193,8 @@ body {
     border: none;
     background: rgba(255,255,255,0.1);
     color: white;
-    font-size: 1rem;
 }
-
 </style>
-
-
-
-
-
-
-
-
-
-
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -312,40 +203,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const progress = document.getElementById('progress');
     const result = document.getElementById('result');
     const btnEntrada = document.getElementById('btnEntrada');
-    const btnSalida = document.getElementById('btnSalida');
+    const btnRegistrarRut = document.getElementById('btnRegistrarRut');
+    const rutModal = document.getElementById('rutModal');
+    const closeModal = document.querySelector('.close');
+    const rutForm = document.getElementById('rutForm');
+    const rutInput = document.getElementById('rutInput');
     const logoImg = document.querySelector('.main-logo');
     const logoGlow = document.querySelector('.logo-glow');
     const originalLogoSrc = "{% static 'img/BULLGYMM.png' %}";
     const originalGlowBackground = 'radial-gradient(circle, rgba(255,70,85,0.4) 0%, transparent 70%)';
 
-    // Función para cambiar el logo y el glow a verde por 10 segundos
     function changeLogoToGreen() {
         logoImg.src = "{% static 'img/BULLGYMHulk.png' %}";
         logoGlow.style.background = 'radial-gradient(circle, rgba(0,255,0,0.4) 0%, transparent 70%)';
         setTimeout(() => {
             logoImg.src = originalLogoSrc;
             logoGlow.style.background = originalGlowBackground;
-        }, 10000); // 10 segundos
+        }, 10000);
     }
 
-    // Inicializar dispositivo
-   
-
-    // Capturar huella
     const captureFingerprint = async () => {
         const res = await fetch('http://localhost:9000/capture', { method: 'POST' });
         if (!res.ok) throw new Error('Error al capturar la huella');
         return res.json().then(data => data.template);
     };
 
-    // Función para registrar asistencia
-    const registrarAsistencia = async (tipo) => {
+    const registrarAsistencia = async () => {
         progress.style.display = 'block';
         try {
             const template = await captureFingerprint();
             state.template = template;
 
-            // Verificar si la huella está registrada
             const verifyRes = await fetch("{% url 'verificar_huella' %}", {
                 method: "POST",
                 headers: {
@@ -360,23 +248,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Huella no registrada');
             }
 
-            // Registrar asistencia
             const asistenciaRes = await fetch("{% url 'registrar_asistencia' %}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRFToken": "{{ csrf_token }}"
                 },
-                body: JSON.stringify({
-                    user_id: verifyData.usuario.id,
-                    tipo: tipo // 'E' para entrada, 'S' para salida
-                })
+                body: JSON.stringify({ user_id: verifyData.usuario.id, tipo: 'E' })
             });
             const asistenciaData = await asistenciaRes.json();
 
             if (asistenciaData.status === 'success') {
-                result.innerHTML = `<div class="alert alert-success">${asistenciaData.mensaje || 'Asistencia registrada exitosamente'} a las ${asistenciaData.hora}</div>`;
-                changeLogoToGreen(); // Cambiar logo y glow a verde
+                result.innerHTML = `<div class="alert alert-success">${asistenciaData.mensaje} a las ${asistenciaData.hora}</div>`;
+                const audio = new Audio(asistenciaData.audio);
+                audio.play();
+                changeLogoToGreen();
             } else {
                 result.innerHTML = `<div class="alert alert-danger">Error: ${asistenciaData.error}</div>`;
             }
@@ -387,105 +273,56 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    btnEntrada.addEventListener('click', () => registrarAsistencia('E'));
-    btnSalida.addEventListener('click', () => registrarAsistencia('S'));
+    btnEntrada.addEventListener('click', registrarAsistencia);
 
+    btnRegistrarRut.addEventListener('click', () => {
+        rutModal.style.display = 'block';
+    });
 
-});
-
-// Manejo del modal de RUT
-const rutModal = document.getElementById('rutModal');
-const btnRegistrarRut = document.getElementById('btnRegistrarRut');
-const closeModal = document.querySelector('.close');
-const rutForm = document.getElementById('rutForm');
-const rutInput = document.getElementById('rutInput');
-const result = document.getElementById('result');
-const logoImg = document.querySelector('.main-logo');
-const logoGlow = document.querySelector('.logo-glow');
-const originalLogoSrc = "{% static 'img/BULLGYMM.png' %}";
-const originalGlowBackground = 'radial-gradient(circle, rgba(255,70,85,0.4) 0%, transparent 70%)';
-
-// Función para cambiar el logo y el glow a verde por 10 segundos
-function changeLogoToGreen() {
-    logoImg.src = "{% static 'img/BULLGYMHulk.png' %}";
-    logoGlow.style.background = 'radial-gradient(circle, rgba(0,255,0,0.4) 0%, transparent 70%)';
-    setTimeout(() => {
-        logoImg.src = originalLogoSrc;
-        logoGlow.style.background = originalGlowBackground;
-    }, 10000); // 10 segundos
-}
-
-// Mostrar modal al hacer clic en el botón
-btnRegistrarRut.addEventListener('click', () => {
-    rutModal.style.display = 'block';
-});
-
-// Cerrar modal al hacer clic en la X
-closeModal.addEventListener('click', () => {
-    rutModal.style.display = 'none';
-    rutInput.value = '';
-});
-
-// Cerrar modal al hacer clic fuera del contenido
-window.addEventListener('click', (event) => {
-    if (event.target === rutModal) {
+    closeModal.addEventListener('click', () => {
         rutModal.style.display = 'none';
         rutInput.value = '';
-    }
-});
+    });
 
-// Manejar envío del formulario de RUT
-rutForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const rut = rutInput.value.trim();
-    if (!rut) {
-        result.innerHTML = `<div class="alert alert-danger">Por favor, ingrese un RUT</div>`;
-        return;
-    }
-
-    try {
-        const response = await fetch('/registrar_entrada_rut/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({ rut: rut })
-        });
-        const data = await response.json();
-        if (data.status === 'success') {
-            result.innerHTML = `<div class="alert alert-success">Bienvenido, ${data.usuario_nombre}</div>`;
+    window.addEventListener('click', (event) => {
+        if (event.target === rutModal) {
             rutModal.style.display = 'none';
             rutInput.value = '';
-            changeLogoToGreen(); // Cambiar logo y glow a verde
-        } else {
-            result.innerHTML = `<div class="alert alert-danger">Error: ${data.error}</div>`;
         }
-    } catch (error) {
-        result.innerHTML = `<div class="alert alert-danger">Error al registrar entrada</div>`;
-        console.error('Error en registro por RUT:', error);
-    }
+    });
+
+    rutForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const rut = rutInput.value.trim();
+        if (!rut) {
+            result.innerHTML = `<div class="alert alert-danger">Por favor, ingrese un RUT</div>`;
+            return;
+        }
+
+        try {
+            const response = await fetch('/registrar_entrada_rut/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ rut: rut })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                result.innerHTML = `<div class="alert alert-success">Bienvenido, ${data.usuario_nombre}</div>`;
+                const audio = new Audio(data.audio);
+                audio.play();
+                rutModal.style.display = 'none';
+                rutInput.value = '';
+                changeLogoToGreen();
+            } else {
+                result.innerHTML = `<div class="alert alert-danger">Error: ${data.error}</div>`;
+            }
+        } catch (error) {
+            result.innerHTML = `<div class="alert alert-danger">Error al registrar entrada</div>`;
+        }
+    });
 });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-<style >
-{% load static %}
-body {
-    background: url("{% static 'img/negro.png' %}") center/cover fixed;
-    backdrop-filter: blur(8px);
-    min-height: 100vh;
-}
-</style>
-
 {% endblock %}

@@ -1,8 +1,6 @@
-
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-
 <style>
 :root {
     --primary-color: #FF4655;
@@ -12,24 +10,18 @@
 }
 
 body {
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                url("{% static 'img/negro.png' %}") center fixed;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("{% static 'img/negro.png' %}") center fixed;
     min-height: 100vh;
-    overflow-x: hidden;
 }
 
 .app-container {
-    background : rgba(194, 180, 180, 0);
     display: grid;
     grid-template-columns: 280px 1fr 280px;
     min-height: 100vh;
-    position: relative;
 }
 
-/* Sidebars mejorados */
 .sidebar {
     background: rgba(35, 35, 35, 0.95);
-    backdrop-filter: blur(12px);
     padding: 1.5rem;
     border-right: 1px solid rgba(255,255,255,0.1);
     position: sticky;
@@ -40,230 +32,119 @@ body {
 
 .main-content {
     background: rgba(30, 30, 30, 0.85);
-    backdrop-filter: blur(8px);
-    min-height: 100vh;
     padding: 2rem;
-    border-left: 1px solid rgba(255,255,255,0.05);
-    border-right: 1px solid rgba(255,255,255,0.05);
 }
 
-/* Tarjetas modernas */
 .card-modern {
-    background: rgba(45, 45, 45, 0.65) !important;
-    backdrop-filter: blur(10px);
+    background: rgba(45, 45, 45, 0.65);
     border: 1px solid rgba(255,255,255,0.15);
     border-radius: 12px;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
 }
 
-.card-modern:hover {
-    transform: translateY(-5px);
-}
-
-/* Mejoras en los botones */
 .btn-gradient {
     background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
     border: none;
     color: white;
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
-    transition: all 0.3s ease;
 }
 
-.btn-gradient:hover {
-    opacity: 0.9;
-    transform: scale(1.02);
-}
-
-/* Lista de movimientos mejorada */
-.movement-item {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    transition: all 0.3s ease;
-}
-
-.movement-item:hover {
-    background: rgba(255,255,255,0.1);
-    transform: translateX(5px);
-}
-
-/* Estadísticas mejoradas */
 .stats-card {
     padding: 1.5rem;
     border-radius: 12px;
     background: linear-gradient(135deg, rgba(255,70,85,0.15), rgba(139,46,22,0.1));
     border: 1px solid rgba(255,255,255,0.1);
 }
-.text-muted{
+
+.text-muted {
     color: rgba(255,255,255,0.6) !important;
-}
-/* Responsive Design */
-@media (max-width: 1200px) {
-    .app-container {
-        grid-template-columns: 1fr;
-    }
-    
-    .sidebar {
-        position: static;
-        height: auto;
-    }
-    
-    .main-content {
-        min-height: auto;
-    }
-}
-
-/* Scroll personalizado */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(0,0,0,0.2);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 4px;
 }
 </style>
 <div class="app-container">
-    <!-- Sidebar Izquierdo -->
     <aside class="sidebar">
-        <div class="d-flex flex-column gap-4">
-            <h4 class="text-white mb-4"><i class="bi bi-people-fill me-2"></i>Gestión de Miembros</h4>
-            
-            <form method="GET" action="{% url 'home' %}">
-                <div class="input-group">
-                    <input type="text" 
-                           class="form-control bg-dark text-white border-dark" 
-                           name="rut" 
-                           placeholder="Buscar por RUT"
-                           value="{{ request.GET.rut }}">
-                    <button class="btn btn-gradient" type="submit">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </form>
-
-            <div class="d-grid gap-3">
-                <a href="{% url 'registrar_usuario' %}" class="btn btn-gradient">
-                    <i class="bi bi-person-plus me-2"></i>Nuevo Miembro
-                </a>
-                <a href="{% url 'lecto_ingreso' %}" class="btn btn-outline-light">
-                    <i class="bi bi-fingerprint me-2"></i>Registrar Asistencia
-                </a>
+        <h4 class="text-white mb-4"><i class="bi bi-people-fill me-2"></i>Gestión de Miembros</h4>
+        <form method="GET" action="{% url 'home' %}">
+            <div class="input-group">
+                <input type="text" class="form-control bg-dark text-white border-dark" name="rut" placeholder="Buscar por RUT" value="{{ request.GET.rut }}">
+                <button class="btn btn-gradient" type="submit"><i class="bi bi-search"></i></button>
             </div>
-
-            {% if usuario_encontrado %}
-            <div class="card-modern p-3 text-white mt-4">
-                <div class="d-flex align-items-center gap-3 mb-3">
-                    <div class="flex-grow-1">
-                        <h5>{{ usuario_encontrado.get_full_name }}</h5>
-                        <small class="text-muted">{{ usuario_encontrado.rut }}</small>
-                    </div>
-                    <span class="badge bg-{% if usuario_encontrado.es_activo %}success{% else %}danger{% endif %}">
-                        {% if usuario_encontrado.es_activo %}Activo{% else %}Inactivo{% endif %}
-                    </span>
-                </div>
-                
-                <div class="d-flex flex-wrap gap-2">
-                    <a href="{% url 'editar_usuario' usuario_encontrado.id %}" 
-                       class="btn btn-sm btn-outline-light">
-                        <i class="bi bi-pencil"></i>
-                    </a>
-                    <a href="{% url 'registro_huella' usuario_encontrado.id %}" 
-                       class="btn btn-sm btn-outline-success">
-                        <i class="bi bi-fingerprint"></i>
-                    </a>
-                    <a href="{% url 'actualizar_membresia' usuario_encontrado.id %}" 
-                       class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-arrow-clockwise"></i>
-                    </a>
-                    <a href="{% url 'eliminar_usuario' usuario_encontrado.id %}" 
-                       class="btn btn-sm btn-outline-danger">
-                        <i class="bi bi-trash"></i>
-                    </a>
-                </div>
-            </div>
-            {% endif %}
+        </form>
+        <div class="d-grid gap-3 mt-3">
+            <a href="{% url 'registrar_usuario' %}" class="btn btn-gradient"><i class="bi bi-person-plus me-2"></i>Nuevo Miembro</a>
+            <a href="{% url 'lecto_ingreso' %}" class="btn btn-outline-light"><i class="bi bi-fingerprint me-2"></i>Registrar Asistencia</a>
         </div>
+        {% if usuario_encontrado %}
+        <div class="card-modern p-3 text-white mt-4">
+            <h5>{{ usuario_encontrado.get_full_name }}</h5>
+            <small class="text-muted">{{ usuario_encontrado.rut }}</small>
+            <div class="d-flex flex-wrap gap-2 mt-2">
+                <a href="{% url 'editar_usuario' usuario_encontrado.id %}" class="btn btn-sm btn-outline-light"><i class="bi bi-pencil"></i></a>
+                <a href="{% url 'registro_huella' usuario_encontrado.id %}" class="btn btn-sm btn-outline-success"><i class="bi bi-fingerprint"></i></a>
+                <a href="{% url 'eliminar_usuario' usuario_encontrado.id %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+            </div>
+        </div>
+        {% endif %}
     </aside>
 
-    <!-- Contenido Principal -->
     <main class="main-content">
-        <!-- Estadísticas -->
+        {% if notificacion %}
+        <div class="alert alert-success">{{ notificacion }}</div>
+        {% endif %}
         <div class="row g-4 mb-5">
             {% for stat in stats %}
             <div class="col-md-6 col-xl-3">
                 <div class="stats-card text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1">{{ stat.title }}</h6>
-                            <h3 class="mb-0">{{ stat.value }}</h3>
-                        </div>
-                        <i class="bi {{ stat.icon }} fs-4 text-muted"></i>
-                    </div>
+                    <h6 class="text-muted mb-1">{{ stat.title }}</h6>
+                    <h3 class="mb-0">{{ stat.value }}</h3>
                 </div>
             </div>
             {% endfor %}
-        </div>
-
-        <!-- Detalle del Miembro -->
-        {% if usuario_encontrado %}
-        <div class="card-modern text-white mb-5 p-4">
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <i class="bi bi-telephone fs-5 text-primary"></i>
-                        <div>
-                            <p class="mb-0"><strong>Teléfono:</strong></p>
-                            <p class="mb-0">{{ usuario_encontrado.telefono }}</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center gap-3">
-                        <i class="bi bi-geo-alt fs-5 text-primary"></i>
-                        <div>
-                            <p class="mb-0"><strong>Dirección:</strong></p>
-                            <p class="mb-0">{{ usuario_encontrado.direccion }}</p>
-                        </div>
-                    </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="stats-card text-white">
+                    <h6 class="text-muted mb-1">Ingresos Diarios</h6>
+                    <h3 class="mb-0">{{ ingresos_diarios }} CLP</h3>
                 </div>
-                
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <i class="bi bi-credit-card fs-5 text-primary"></i>
-                        <div>
-                            <p class="mb-0"><strong>Membresía:</strong></p>
-                            <p class="mb-0">{{ usuario_encontrado.modo_pago }} meses</p>
-                        </div>
-                    </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="stats-card text-white">
+                    <h6 class="text-muted mb-1">Ingresos Mensuales</h6>
+                    <h3 class="mb-0">{{ ingresos_mensuales }} CLP</h3>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="stats-card text-white">
+                    <h6 class="text-muted mb-1">Ingresos Trimestrales</h6>
+                    <h3 class="mb-0">{{ ingresos_trimestrales }} CLP</h3>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="stats-card text-white">
+                    <h6 class="text-muted mb-1">Ingresos Anuales</h6>
+                    <h3 class="mb-0">{{ ingresos_anuales }} CLP</h3>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="stats-card text-white">
+                    <h6 class="text-muted mb-1">Meta Mensual</h6>
+                    <h3 class="mb-0">{{ meta_mensual }} CLP</h3>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="stats-card text-white">
+                    <h6 class="text-muted mb-1">Máximo Mensual</h6>
+                    <h3 class="mb-0">{{ maximo_mensual }} CLP</h3>
                 </div>
             </div>
         </div>
-        {% endif %}
     </main>
 
-    <!-- Sidebar Derecho -->
     <aside class="sidebar">
         <h4 class="text-white mb-4"><i class="bi bi-clock-history me-2"></i>Últimos Movimientos</h4>
-        
         <div class="d-flex flex-column gap-3">
             {% for asis in ultimas_asistencias %}
-            <div class="movement-item">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <h6 class="mb-1">{{ asis.usuario.get_full_name }}</h6>
-                        <small class="text-muted">{{ asis.fecha_hora|date:"d/m/Y H:i" }}</small>
-                    </div>
-                    <span class="badge bg-{% if asis.tipo == 'E' %}success{% else %}danger{% endif %}">
-                        {% if asis.tipo == 'E' %}E{% else %}S{% endif %}
-                    </span>
-                </div>
+            <div class="card-modern p-3 text-white">
+                <h6 class="mb-1">{{ asis.usuario.get_full_name }}</h6>
+                <small class="text-muted">{{ asis.fecha_hora|date:"d/m/Y H:i" }}</small>
             </div>
             {% endfor %}
         </div>

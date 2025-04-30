@@ -19,28 +19,18 @@ from django.contrib import admin
 from django.urls import path
 from core import views
 
-
-
 urlpatterns = [
     path("admin/", admin.site.urls),
-    
-    
     path("", views.home, name='home'),
-
-
     path('registrar_usuario/', views.registrar_usuario, name='registrar_usuario'),
     path('registro_huella/<int:user_id>/', views.registro_huella, name='registro_huella'),
     path('api/registro_huella/<int:user_id>/', views.FingerprintRegistrationView.as_view(), name='api_registro_huella'),
-    
-
     path('lecto_ingreso/', views.lecto_ingreso, name='lecto_ingreso'),
     path('verificar_huella/', views.verificar_huella, name='verificar_huella'),
     path('registrar_asistencia/', views.registrar_asistencia, name='registrar_asistencia'),
     path('editar_usuario/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
-
     path('registrar_entrada_rut/', views.registrar_entrada_rut, name='registrar_entrada_rut'),
-
     path('eliminar_usuario/<int:usuario_id>/', views.eliminar_usuario, name='eliminar_usuario'),
-    path('actualizar_membresia/<int:user_id>/', views.actualizar_membresia, name='actualizar_membresia'),
 ]
+
 

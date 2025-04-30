@@ -1,31 +1,31 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Usuario, HuellaDigital, Asistencia
+from .models import Usuario, HuellaDigital, Asistencia,AudioPresentacion,Plan,Meta
 from .forms import UsuarioForm
 
 # Personalización para el modelo Usuario
 class UsuarioAdmin(UserAdmin):
     model = Usuario
     form = UsuarioForm
-    list_display = ('rut', 'first_name', 'last_name', 'telefono', 'direccion', 'fecha_ingreso', 'modo_pago', 'fecha_vencimiento', 'es_activo')
-    list_filter = ('es_activo', 'modo_pago', 'fecha_vencimiento')
+    list_display = ('rut', 'first_name', 'last_name', 'telefono', 'plan', 'fecha_vencimiento', 'es_activo')
+    list_filter = ('es_activo', 'plan')
     search_fields = ('rut', 'first_name', 'last_name')
     ordering = ('rut',)
     fieldsets = (
         (None, {'fields': ('rut', 'password')}),
         ('Información personal', {'fields': ('first_name', 'last_name', 'telefono', 'direccion')}),
-        ('Membresía', {'fields': ('fecha_ingreso', 'modo_pago', 'fecha_vencimiento', 'es_activo')}),
+        ('Membresía', {'fields': ('fecha_ingreso', 'plan', 'fecha_vencimiento', 'es_activo')}),
         ('Permisos', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Fechas importantes', {'fields': ('last_login', 'date_joined')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('rut', 'first_name', 'last_name', 'password1', 'password2', 'telefono', 'direccion', 'modo_pago'),
+            'fields': ('rut', 'first_name', 'last_name', 'telefono', 'direccion', 'plan'),
         }),
     )
-    # Permitir edición directa en la lista
-    list_editable = ('fecha_vencimiento', 'es_activo')
+
+class AudioPresentacionAdmin(admin.ModelAdmin):
+    list_display = ('descripcion', 'archivo')
 
 # Personalización para el modelo HuellaDigital
 class HuellaDigitalAdmin(admin.ModelAdmin):
@@ -45,3 +45,6 @@ class AsistenciaAdmin(admin.ModelAdmin):
 admin.site.register(Usuario, UsuarioAdmin)
 admin.site.register(HuellaDigital, HuellaDigitalAdmin)
 admin.site.register(Asistencia, AsistenciaAdmin)
+admin.site.register(AudioPresentacion, AudioPresentacionAdmin)
+admin.site.register(Plan)
+admin.site.register(Meta)

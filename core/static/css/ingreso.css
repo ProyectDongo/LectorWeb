@@ -1,6 +1,11 @@
 
+body {
+    background: url("{% static 'img/negro.png' %}") center/cover fixed;
+    backdrop-filter: blur(12px);
+    min-height: 100vh;
+    margin: 0;
+}
 
-/* CSS from ingreso.css */
 .attendance-container {
     display: flex;
     flex-direction: column;
@@ -8,196 +13,204 @@
     justify-content: center;
     min-height: 100vh;
     padding: 2rem;
-    background: transparent;
+    gap: 2rem;
 }
 
-.fingerprint-container {
-    margin-bottom: 2rem;
-}
-
-
-.fa-fingerprint {
-    font-size: 3.5rem;
-    color: #00ff88;
-    z-index: 2;
-}
-
-
-.action-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.gym-btn {
-    padding: 1.2rem 2rem;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.8rem;
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.gym-btn i {
-    font-size: 1.3rem;
-}
-
-.entrance-btn {
-    background: linear-gradient(135deg, rgba(0, 255, 136, 0.5), rgba(0, 204, 106, 0.5));
-}
-
-.exit-btn {
-    background: linear-gradient(135deg, rgba(255, 70, 85, 0.5), rgba(204, 42, 58, 0.5));
-}
-
-.back-btn {
-    background: linear-gradient(135deg, rgba(42, 42, 42, 0.5), rgba(26, 26, 26, 0.5));
-}
-
-.gym-btn:hover {
-    transform: translateY(-2px);
-    opacity: 0.9;
-}
-
-.status-content, .progress-container, .result-container {
-    text-align: center;
-    color: #ffffff;
-}
-
-.status-text {
-    font-size: 1.2rem;
+.logo-container {
+    position: relative;
+    width: 380px;
+    height: 380px;
     margin-bottom: 1rem;
 }
 
-.progress-bar {
-    width: 0%;
-    height: 4px;
-    background: #00ff88;
-    margin: 1rem auto;
-    border-radius: 2px;
-    animation: progress 2s ease-in-out;
-}
-
-.alert-success {
-    background-color: rgba(0, 255, 136, 0.2);
-    color: #00ff88;
-    padding: 1rem;
-    border-radius: 5px;
-    margin-top: 1rem;
-}
-
-.alert-danger {
-    background-color: rgba(255, 70, 85, 0.2);
-    color: #ff4655;
-    padding: 1rem;
-    border-radius: 5px;
-    margin-top: 1rem;
-}
-
-@keyframes ripple {
-    0% { transform: scale(1); opacity: 1; }
-    100% { transform: scale(1.5); opacity: 0; }
-}
-
-@keyframes progress {
-    0% { width: 0%; }
-    100% { width: 100%; }
-}
-.sensor-logo {
-    width: 70%;
-    height: 70%;
-    object-fit: contain;
-    z-index: 2;
-    position: relative;
-    filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.5));
-}
-
-.ripple-effect {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 3px solid #00ff88;
-    border-radius: 50%;
-    animation: ripple 1.5s infinite;
-    opacity: 0;
-    z-index: 1;
-}
-
-@keyframes ripple {
-    0% {
-        transform: scale(0.8);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(1.5);
-        opacity: 0;
-    }
-}
-
-.fingerprint-container {
-    margin-bottom: 2rem;
-    perspective: 1000px;
-}
-
-.sensor-animation {
-    position: relative;
-    width: 500px;
-    height: 500px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.5s ease;
-}
-
-.sensor-logo {
+.main-logo {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    z-index: 2;
-    position: relative;
-    transition: transform 0.3s ease;
-    filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.5));
-}
-
-
-
-@keyframes ripple {
-    0% {
-        opacity: 0.8;
-        transform: scale(1);
-        filter: brightness(1.5) drop-shadow(0 0 10px #00ff88);
-    }
-    100% {
-        opacity: 0;
-        transform: scale(1.8);
-        filter: brightness(2.5) drop-shadow(0 0 30px #00ff88);
-    }
-}
-
-/* Cuando el dispositivo está conectado */
-.sensor-animation.connected {
-    transform: scale(1.1);
-}
-
-.sensor-animation.connected .sensor-logo {
+    filter: drop-shadow(0 0 25px rgba(255, 70, 85, 0.8));
     animation: float 3s ease-in-out infinite;
 }
 
+.logo-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(255,70,85,0.4) 0%, transparent 70%);
+    animation: glow-pulse 2.5s infinite;
+}
+
+@keyframes glow-pulse {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.3; transform: translate(-50%, -50%) scale(1.3); }
+}
+
 @keyframes float {
-    0%, 100% {
-        transform: translateY(0);
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px 0;
+}
+
+.gym-btn {
+    padding: 1.5rem;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 80px;
+}
+
+.entrance-btn {
+    background: linear-gradient(135deg, rgba(255,70,85,0.9), rgba(179, 19, 18, 0.9));
+    box-shadow: 0 4px 20px rgba(255,70,85,0.3);
+}
+
+.exit-btn {
+    background: linear-gradient(135deg, rgba(40,40,40,0.9), rgba(25,25,25,0.9));
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.back-btn {
+    background: linear-gradient(135deg, rgba(255,70,85,0.5), rgba(179, 19, 18, 0.5));
+    box-shadow: 0 4px 15px rgba(255,70,85,0.2);
+}
+
+.gym-btn:hover {
+    transform: translateY(-5px) scale(1.02);
+    opacity: 0.95;
+}
+
+.progress-container {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+    margin: 1rem 0;
+}
+
+.progress-bar {
+    height: 5px;
+    background: linear-gradient(90deg, #ff4655, #ff7a85);
+    animation: progress 2s ease-in-out;
+}
+
+.status-content {
+    font-size: 1.2rem;
+    color: rgba(255,255,255,0.9);
+    text-align: center;
+}
+
+.result-container {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.alert-success, .alert-danger {
+    padding: 1.2rem;
+    border-radius: 10px;
+    font-weight: 500;
+    backdrop-filter: blur(5px);
+}
+
+
+
+/* Estilos responsivos */
+
+@media (max-width: 768px) {
+    .action-buttons {
+        grid-template-columns: 1fr;
+        max-width: 400px;
     }
-    50% {
-        transform: translateY(-10px);
+    
+    .gym-btn {
+        min-height: 70px;
+        font-size: 1rem;
     }
 }
+
+.entrance-btn {
+    background: linear-gradient(135deg, rgba(255,70,85,0.9), rgba(179, 19, 18, 0.9));
+    box-shadow: 0 4px 20px rgba(255,70,85,0.3);
+}
+
+.exit-btn {
+    background: linear-gradient(135deg, rgba(40,40,40,0.9), rgba(25,25,25,0.9));
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.rut-btn {
+    background: linear-gradient(135deg, rgba(255, 153, 51, 0.9), rgba(204, 102, 0, 0.9));
+    box-shadow: 0 4px 20px rgba(255, 153, 51, 0.3);
+}
+
+.rut-btn:hover {
+    transform: translateY(-5px) scale(1.02);
+    opacity: 0.95;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: linear-gradient(135deg, rgba(40,40,40,0.95), rgba(25,25,25,0.95));
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    color: white;
+}
+
+.close {
+    color: #ff4655;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #ff7a85;
+    text-decoration: none;
+}
+
+#rutForm input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    font-size: 1rem;
+}
+
+
